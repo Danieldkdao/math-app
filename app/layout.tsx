@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Math App",
@@ -19,6 +20,7 @@ export default function RootLayout({
         <main className="flex flex-col items-center justify-center w-full">
           <div className="w-[95%] md:w-[90%] lg:w-[85%]">{children}</div>
         </main>
+        <Footer />
       </body>
     </html>
   );
