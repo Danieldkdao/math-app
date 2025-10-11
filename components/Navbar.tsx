@@ -10,7 +10,7 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div className="w-full flex justify-between items-center sticky top-0 p-2 pr-4">
+    <div className="w-full flex justify-between items-center sticky top-0 p-2 pr-4 bg-white">
       <div className="flex items-center gap-18">
         <Image src={Logo} alt="Math app logo image" height={90} />
         <div className="items-center justify-center gap-6 hidden md:flex">
@@ -40,7 +40,7 @@ const Navbar = () => {
       <div
         className={`fixed inset-0 bg-white flex flex-col ${
           showMenu ? "" : "translate-x-full"
-        } transition-transform duration-400 ease-in-out`}
+        } transition-transform duration-400 ease-in-out z-[100]`}
       >
         <button
           onClick={() => setShowMenu(false)}
