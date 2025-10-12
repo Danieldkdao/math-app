@@ -54,14 +54,12 @@ const InfiniteSlide = () => {
 
   return (
     <Marquee
-      speed={80}
+      speed={60}
       pauseOnHover={true}
-      style={{zIndex: -10}}
     >
       {items.map((item, index) => (
         <div key={index} className="bg-gray-200 mx-10 p-5 rounded-xl flex flex-col w-80 items-center h-full gap-2">
           <Image src={item.image} alt="User testimonial image" height={40}/>
-          <h1 className="text-xl font-medium">{item.title}</h1>
           <div className="flex">
             {stars.map((num) => {
               if (num <= item.rating) return <FaStar key={num}/>;
@@ -70,6 +68,7 @@ const InfiniteSlide = () => {
           </div>
           <p className="font-medium text-center">"{item.content}"</p>
           <p>- {item.name}</p>
+          <p className="text-sm text-gray-500">{item.title}</p>
         </div>
       ))}
     </Marquee>

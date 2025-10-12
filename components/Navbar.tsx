@@ -10,7 +10,7 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div className="w-full flex justify-between items-center sticky top-0 p-2 pr-4 bg-white">
+    <div className="w-full flex justify-between items-center sticky top-0 p-2 pr-4 bg-white z-[10000]">
       <div className="flex items-center gap-18">
         <Image src={Logo} alt="Math app logo image" height={90} />
         <div className="items-center justify-center gap-6 hidden md:flex">
@@ -25,7 +25,7 @@ const Navbar = () => {
           </Link>
         </div>
       </div>
-      <div className="flex items-center gap-6 cursor-pointer">
+      <div className="flex items-center sm:gap-6 gap-2 cursor-pointer">
         <button
           onClick={() => setShowMenu(true)}
           className="cursor-pointer active:scale-95 transition-transform duration-100 ease-in-out md:hidden"

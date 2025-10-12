@@ -2,6 +2,7 @@ import Image from "next/image";
 import UsersImage from "@/public/user_group.png";
 import { FaCalculator } from "react-icons/fa6";
 import InfiniteSlide from "@/components/Home/InfiniteSlide";
+import Faqs from "@/components/Home/Faqs";
 
 export default function Home() {
   const howWeDoItCards = [
@@ -77,28 +78,17 @@ export default function Home() {
         </h1>
         <InfiniteSlide />
       </div>
+      <div className="w-[90%] flex flex-col items-center gap-5">
+        <h1 className="text-4xl font-bold text-center">Frequently Asked Questions</h1>
+        <Faqs />
+      </div>
       <div className="w-full flex flex-col items-center gap-4">
-        <h1 className="text-4xl font-bold text-center max-w-72">
+        <h1 className="text-4xl font-bold text-center">
           Convinced? Click below to sign up!
         </h1>
         <button className="text-xl font-medium bg-blue-100 py-2 px-20 rounded-lg cursor-pointer hover:bg-blue-50 active:scale-95 transition-all duration-200 ease-in-out">
           Sign up
         </button>
-      </div>
-      <div className="w-full flex flex-col items-center gap-4">
-        <h1 className="text-4xl font-bold text-center">
-          Subscribe to our newsletter
-        </h1>
-        <form className="w-[90%] sm:w-[70%] md:w-[60%] lg:w-[50%] flex items-center">
-          <input
-            required
-            type="email"
-            className="border-2 border-gray-200 text-xl p-3 outline-0 rounded-l-lg flex-1"
-          />
-          <button className="text-xl font-medium bg-blue-100 py-3.5 px-5 rounded-r-lg cursor-pointer hover:bg-blue-50 active:scale-95 transition-all duration-200 ease-in-out">
-            Subscribe
-          </button>
-        </form>
       </div>
     </div>
   );
