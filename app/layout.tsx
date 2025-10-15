@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { Toaster } from "react-hot-toast";
+import { AppContextProvider } from "@/hooks/useApp";
 
 export const metadata: Metadata = {
   title: "Math App",
@@ -16,11 +16,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
         <main className="flex flex-col items-center justify-center w-full">
-          <div className="w-[95%] md:w-[90%] lg:w-[85%]">{children}</div>
+          <AppContextProvider>
+            {children}
+            <Toaster position="top-center" />
+          </AppContextProvider>
         </main>
-        <Footer />
       </body>
     </html>
   );

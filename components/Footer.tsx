@@ -8,7 +8,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <div className="mt-32">
+    <div className="mt-32 w-full">
       <div className="p-5 flex justify-between flex-col lg:flex-row gap-10 lg:gap-0">
         <div className="flex flex-col gap-2">
           <Image src={Logo} alt="Math app logo" height={70} />
