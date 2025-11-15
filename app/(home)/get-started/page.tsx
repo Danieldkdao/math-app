@@ -41,7 +41,7 @@ const GetStartedPage = () => {
             <div className="flex-1 flex items-end">
               <button
                 disabled
-                className="text-lg cursor-not-allowed font-medium bg-blue-500/100 opacity-40 py-2 px-20 rounded-lg transition-all duration-200 ease-in-out text-white w-full"
+                className="text-lg font-medium bg-blue-500/100 opacity-40 py-2 px-20 rounded-lg transition-all duration-200 ease-in-out text-white w-full"
               >
                 Current Plan
               </button>
@@ -64,7 +64,6 @@ const GetStartedPage = () => {
             </div>
             <div className="flex-1 flex items-end">
               <button
-                disabled
                 className="text-lg cursor-pointer font-medium bg-blue-500/100 py-2 px-20 rounded-lg hover:bg-blue-500/50 active:scale-95 transition-all duration-200 ease-in-out text-white w-full"
               >
                 Get plan

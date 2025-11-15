@@ -14,18 +14,18 @@ const db = client.db();
 export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
-    // requireEmailVerification: true,
+    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       await sendPasswordResetEmail({ user, url });
     },
   },
-  // emailVerification: {
-  //   autoSignInAfterVerification: true,
-  //   sendOnSignUp: true,
-  //   sendVerificationEmail: async ({ user, url }) => {
-  //     await sendEmailVerificationEmail({ user, url });
-  //   },
-  // },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmailVerificationEmail({ user, url });
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,

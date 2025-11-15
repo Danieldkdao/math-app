@@ -3,8 +3,8 @@ import UsersImage from "@/public/user_group.png";
 import { FaCalculator } from "react-icons/fa6";
 import InfiniteSlide from "@/components/Home/InfiniteSlide";
 import Faqs from "@/components/Home/Faqs";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/Home/Navbar";
+import Footer from "@/components/Home/Footer";
 
 export default function Home() {
   const howWeDoItCards = [

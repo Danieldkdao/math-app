@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SocialAuthButtons from "@/components/Auth/social-auth-buttons";
 import { useApp } from "@/hooks/useApp";
+import EmailVerification from "@/components/Auth/email-verification";
 
 const signUpSchema = z.object({
   name: z.string(),
@@ -34,24 +35,33 @@ const SignUpPage = () => {
 
   const { redirectIfSignedIn } = useApp();
 
+  const [email, setEmail] = useState<string>("");
+
   useEffect(() => {
     redirectIfSignedIn();
   }, [router]);
 
   const handleSignUp = async (data: SignUpForm) => {
-    await authClient.signUp.email(
+    const res = await authClient.signUp.email(
       { ...data, callbackURL: "/" },
       {
         onError: (error) => {
           toast.error(error.error.message || "Failed to sign up");
         },
-        onSuccess: () => {
-          reset();
-          router.push("/");
-        },
       }
     );
+    if(res.error == null && !res.data.user.emailVerified){
+      setEmail(data.email);
+    }
   };
+
+  if (email) {
+    return (
+      <div className="flex w-full h-screen items-center justify-center">
+        <EmailVerification email={email}/>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-center gap-4 h-screen">

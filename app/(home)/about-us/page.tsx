@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import MathImage from "@/public/about-math.png";
-import { FaLightbulb, FaStairs, FaPuzzlePiece, FaUser } from "react-icons/fa6";
+import { FaLightbulb, FaStairs, FaPuzzlePiece } from "react-icons/fa6";
 
 const AboutUsPage = () => {
   const coreBeliefs = [

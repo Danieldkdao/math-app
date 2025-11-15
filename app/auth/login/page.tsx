@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
@@ -10,11 +10,12 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SocialAuthButtons from "@/components/Auth/social-auth-buttons";
 import { useApp } from "@/hooks/useApp";
+import EmailVerification from "@/components/Auth/email-verification";
+import ForgotPassword from "@/components/Auth/forgot-password";
 
 const loginSchema = z.object({
   email: z.email({ error: "Please enter a valid email address." }),
-  password: z
-    .string()
+  password: z.string(),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -31,6 +32,9 @@ const LoginPage = () => {
   const router = useRouter();
   const { redirectIfSignedIn } = useApp();
 
+  const [email, setEmail] = useState("");
+  const [resetPassword, setResetPassword] = useState(false);
+
   useEffect(() => {
     redirectIfSignedIn();
   }, [router]);
@@ -40,6 +44,9 @@ const LoginPage = () => {
       { ...data, callbackURL: "/" },
       {
         onError: (error) => {
+          if(error.error.code === "EMAIL_NOT_VERIFIED"){
+            setEmail(data.email);
+          }
           toast.error(error.error.message || "Failed to sign in");
         },
         onSuccess: () => {
@@ -49,6 +56,22 @@ const LoginPage = () => {
       }
     );
   };
+
+  if(resetPassword){
+    return (
+      <div className="flex w-full h-screen items-center justify-center">
+        <ForgotPassword />
+      </div>
+    );
+  }
+
+  if (email) {
+    return (
+      <div className="flex w-full h-screen items-center justify-center">
+        <EmailVerification email={email} />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-center gap-4 h-screen">
@@ -77,7 +100,7 @@ const LoginPage = () => {
             <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
           )}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 items-start">
           <label
             htmlFor="password"
             className={`transition-colors duration-200 ease-in-out ${
@@ -90,7 +113,7 @@ const LoginPage = () => {
             {...register("password")}
             type="password"
             id="password"
-            className={`border px-3 py-2 rounded outline-0 transition-all duration-200 ease-in-out ${
+            className={`border px-3 py-2 rounded outline-0 transition-all duration-200 ease-in-out w-full ${
               errors.password ? "border-red-500 border-2" : ""
             }`}
           />
@@ -99,6 +122,9 @@ const LoginPage = () => {
               {errors.password.message}
             </p>
           )}
+          <p onClick={() => setResetPassword(true)} className="text-sm text-center underline cursor-pointer">
+            Forgot your password?
+          </p>
         </div>
         <button
           disabled={isSubmitting}
@@ -114,20 +140,12 @@ const LoginPage = () => {
           <hr className="flex-1" />
         </div>
         <SocialAuthButtons />
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-center text-sm">
-            New to Figured Out?{" "}
-            <Link href="/auth/sign-up" className="font-medium text-blue-400">
-              Create Account
-            </Link>
-          </p>
-          <p className="text-sm text-center">
-            Forgot password?{" "}
-            <span className="cursor-pointer font-medium text-blue-400">
-              Click here
-            </span>
-          </p>
-        </div>
+        <p className="text-center text-sm">
+          New to Figured Out?{" "}
+          <Link href="/auth/sign-up" className="font-medium text-blue-400">
+            Create Account
+          </Link>
+        </p>
       </form>
     </div>
   );
