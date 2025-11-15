@@ -14,15 +14,11 @@ import {
   FaDumbbell,
 } from "react-icons/fa6";
 import { authClient } from "@/lib/auth/auth-client";
+import UserProfile from "../Auth/user-profile";
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const { data: session, isPending: loading } = authClient.useSession();
-
-  if (loading) {
-    return <div className="text-4xl font-bold text-center">Loading...</div>;
-  }
+  const { data: session } = authClient.useSession();
 
   const isNotLoggedIn = session == null;
 
@@ -52,47 +48,7 @@ const Navbar = () => {
             <span className="text-xl font-medium hidden md:block">Sign in</span>
           </Link>
         ) : (
-          <div
-            onClick={() => setShowUserDropdown(!showUserDropdown)}
-            className="relative"
-          >
-            {session.user.image ? (
-              <img
-                src={session.user.image}
-                alt="User profile image"
-                className="size-12 rounded-full aspect-[1/1]"
-              />
-            ) : (
-              <FaCircleUser size={50} />
-            )}
-            <div
-              className={`absolute top-[125%] bg-gray-200 shadow-lg right-0 p-3 rounded flex flex-col gap-1.5 transition-opacity duration-200 ease-in-out ${
-                showUserDropdown
-                  ? "opacity-100 pointer-events-auto"
-                  : "opacity-0 pointer-events-none"
-              }`}
-            >
-              <Link href="/profile" className="flex items-center gap-2">
-                <FaGear />
-                <h1>My Profile</h1>
-              </Link>
-              <Link href="/train" className="flex items-center gap-2">
-                <FaDumbbell />
-                <h1>Train</h1>
-              </Link>
-              <Link href="/community" className="flex items-center gap-2">
-                <FaCalculator />
-                <h1>Community</h1>
-              </Link>
-              <div
-                onClick={() => authClient.signOut()}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <FaRightToBracket />
-                <h1>Sign out</h1>
-              </div>
-            </div>
-          </div>
+          <UserProfile />
         )}
         <button
           onClick={() => setShowMenu(true)}

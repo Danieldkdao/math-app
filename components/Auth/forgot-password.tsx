@@ -3,11 +3,12 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useRef, useState } from "react";
-import ActionButton from "../General/action-button";
+import React from "react";
 import { authClient } from "@/lib/auth/auth-client";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../General/loading-spinner";
+import Image from "next/image";
+import Logo from "@/public/math-app-logo.png";
 
 const ForgotPasswordSchema = z.object({
   email: z.email({ error: "Please enter a valid email." }),
@@ -48,6 +49,7 @@ const ForgotPassword = () => {
       onSubmit={handleSubmit(sendForgotPassword)}
       className="flex flex-col items-center gap-4"
     >
+      <Image src={Logo} alt="Figured out logo" height={90}/>
       <h1 className="text-4xl font-bold text-center">Forgot Password</h1>
       <p className="text-center">
         Enter your email below. We will send you a link to reset your
