@@ -6,12 +6,12 @@ import Link from "next/link";
 
 const Navbar = () => {
   return (
-    <div className="flex items-center justify-between p-2 pr-4">
+    <div className="flex items-center justify-between p-2 pr-4 border-b border-gray-400">
       <Link href="/">
         <Image
           src={Logo}
           alt="Figured out logo"
-          height={90}
+          height={70}
           className="cursor-pointer"
         />
       </Link>

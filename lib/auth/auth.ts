@@ -5,6 +5,7 @@ import { nextCookies } from "better-auth/next-js";
 import { connectDB } from "@/db/db";
 import sendEmailVerificationEmail from "../emails/email-verification";
 import sendPasswordResetEmail from "../emails/password-reset";
+import { admin } from "better-auth/plugins";
 
 await connectDB();
 
@@ -42,7 +43,7 @@ export const auth = betterAuth({
       maxAge: 60 * 5,
     },
   },
-  plugins: [nextCookies()],
+  plugins: [nextCookies(), admin()],
   database: mongodbAdapter(db, {
     client,
   }),

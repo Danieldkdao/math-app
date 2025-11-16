@@ -42,7 +42,7 @@ const ResetPasswordPage = () => {
       {
         onError: (error) => {
           toast.error(
-            error.error.message || "Error resetting password."
+            error.error.message || "Failed to reset password."
           );
         },
         onSuccess: () => {
@@ -53,7 +53,7 @@ const ResetPasswordPage = () => {
     );
   };
 
-  if(token == null || error == null){
+  if(token == null || error != null){
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <div className="border rounded-md p-5 flex flex-col items-center gap-2">
@@ -86,7 +86,7 @@ const ResetPasswordPage = () => {
         <div className="flex flex-col gap-2 w-full">
           <input
             {...register("password")}
-            id="email"
+            type="password"
             className={`border px-3 py-2 rounded outline-0 transition-all duration-200 ease-in-out ${
               errors.password ? "border-red-500 border-2" : ""
             }`}

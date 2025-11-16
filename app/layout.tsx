@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { AppContextProvider } from "@/hooks/useApp";
+import { ModalContextProvider } from "@/hooks/useModal";
+import { TrainContextProvider } from "@/hooks/useTrain";
 
 export const metadata: Metadata = {
   title: "Math App",
@@ -17,10 +19,22 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <main className="flex flex-col items-center justify-center w-full">
-          <AppContextProvider>
-            {children}
-            <Toaster position="top-center" />
-          </AppContextProvider>
+          <ModalContextProvider>
+            <TrainContextProvider>
+              <AppContextProvider>
+                {children}
+                <Toaster
+                  position="top-center"
+                  toastOptions={{
+                    className: "z-[10000]",
+                    style: {
+                      zIndex: 10000,
+                    },
+                  }}
+                />
+              </AppContextProvider>
+            </TrainContextProvider>
+          </ModalContextProvider>
         </main>
       </body>
     </html>

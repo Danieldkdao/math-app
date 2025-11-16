@@ -1,15 +1,15 @@
-import Footer from "@/components/Dashboard/Footer";
+import Sidebar from "@/components/Dashboard/Sidebar";
 import Navbar from "@/components/Dashboard/Navbar";
 import { ReactNode } from "react";
 
 const HomeLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="w-full">
+    <div className="w-full h-screen flex flex-col">
       <Navbar />
-      <main className="flex flex-col items-center justify-center w-full">
-        <div className="w-[95%] md:w-[90%] lg:w-[85%]">{children}</div>
+      <main className="flex flex-1 overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 p-4 overflow-y-auto">{children}</div>
       </main>
-      <Footer />
     </div>
   );
 };

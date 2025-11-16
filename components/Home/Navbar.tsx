@@ -23,7 +23,7 @@ const Navbar = () => {
   const isNotLoggedIn = session == null;
 
   return (
-    <div className="w-full flex justify-between items-center sticky top-0 p-2 pr-4 bg-white z-[10000]">
+    <div className="w-full flex justify-between items-center sticky top-0 p-2 pr-4 bg-white z-[100]">
       <div className="flex items-center gap-18">
         <Image src={Logo} alt="Math app logo image" height={90} />
         <div className="items-center justify-center gap-6 hidden md:flex">

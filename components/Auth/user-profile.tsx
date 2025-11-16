@@ -30,10 +30,12 @@ const UserProfile = () => {
         <img
           src={session.user.image}
           alt="User profile image"
-          className="size-12 rounded-full aspect-[1/1]"
+          className="rounded-full"
+          width={35}
+          height={36}
         />
       ) : (
-        <FaCircleUser size={50} />
+        <FaCircleUser size={35} />
       )}
       <div
         className={`absolute top-[125%] bg-gray-200 shadow-lg right-0 p-3 rounded flex flex-col gap-1.5 transition-opacity duration-200 ease-in-out ${
