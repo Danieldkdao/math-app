@@ -1,12 +1,22 @@
 import { PuzzleSession, SessionPuzzle, UserSettings } from "@/lib/types";
-import { mathPuzzleCategories } from "@/lib/utils";
+import { mathPuzzleCategories, mathPuzzleDifficultyLevels } from "@/lib/utils";
 import mongoose, { Document, Schema, Model } from "mongoose";
+import "@/db/schemas/math-puzzle-model";
 
 type PuzzleSessionSchemaType = PuzzleSession & Document;
 
 const UserSettingsSchema = new Schema<UserSettings>(
   {
-    selectedCategories: { type: [String], enum: mathPuzzleCategories },
+    selectedDifficultyLevels: {
+      type: [String],
+      required: true,
+      enum: mathPuzzleDifficultyLevels,
+    },
+    selectedCategories: {
+      type: [String],
+      required: true,
+      enum: mathPuzzleCategories,
+    },
     timeLimitPerPuzzle: { type: Number },
     hints: { type: Boolean, required: true },
     skips: { type: Boolean, required: true },
@@ -21,6 +31,7 @@ const SessionPuzzleSchema = new Schema<SessionPuzzle>(
     userAnswer: { type: Number },
     result: { type: String, enum: ["correct", "incorrect", "skipped"] },
     timeSpent: { type: Number, required: true },
+    hintUsed: { type: Boolean, required: true },
   },
   { _id: false }
 );
@@ -34,6 +45,8 @@ const PuzzleSessionSchema = new Schema<PuzzleSessionSchemaType>(
   { timestamps: true }
 );
 
-const puzzleSessionModel: Model<PuzzleSessionSchemaType> = mongoose.models.PuzzleSessions || mongoose.model("PuzzleSessions", PuzzleSessionSchema, "puzzle-sessions");
+const puzzleSessionModel: Model<PuzzleSessionSchemaType> =
+  mongoose.models.PuzzleSessions ||
+  mongoose.model("PuzzleSessions", PuzzleSessionSchema, "puzzle-sessions");
 
 export default puzzleSessionModel;

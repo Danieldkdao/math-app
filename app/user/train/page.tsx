@@ -1,12 +1,11 @@
 import TrainContainer from "@/components/Dashboard/train/train-container";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 const TrainPage = async () => {
   const h = await headers();
   const session = await auth.api.getSession({headers: h});
-  if(session == null) return redirect("/");
+  if(session == null) return;
 
   return (
     <div className="w-full flex justify-center">

@@ -7,24 +7,32 @@ if (!MONGODB_URI) {
     "Please define the database connection string inside the environment variables."
   );
 }
+let cached = (global as any).mongoose;
 
-let cached = (global as any).mongoose || { conn: null, promise: null };
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
 
 export const connectDB = async () => {
-  if(cached.conn) return cached.conn;
-
-  if(!cached.promise){
-    cached.promise = mongoose.connect(MONGODB_URI, {
+  if (cached.conn) {
+    return cached.conn;
+  }
+  if (!cached.promise) {
+    const opts = {
       dbName: "math-app",
       bufferCommands: false,
-    }).then((mongoose) => {
+    };
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log("MongoDB database connected!");
       return mongoose;
     });
-
-    cached.conn = await cached.promise;
-    (global as any).mongoose = cached.conn;
-
-    return cached.conn;
   }
-}
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
+  }
+  return cached.conn;
+};

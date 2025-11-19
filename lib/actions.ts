@@ -1,13 +1,19 @@
 "use server";
 
 import mathPuzzleModel from "@/db/schemas/math-puzzle-model";
-import { MathPuzzleCategory, PuzzleSession, PuzzleSessionServer } from "./types";
+import {
+  MathPuzzleCategory,
+  MathPuzzleDifficultyLevels,
+  PuzzleSession,
+  PuzzleSessionServer,
+} from "./types";
 import { connectDB } from "@/db/db";
-import { mathPuzzleCategories } from "./utils";
+import { mathPuzzleCategories, mathPuzzleDifficultyLevels } from "./utils";
 import puzzleSessionModel from "@/db/schemas/puzzle-session-model";
 
 export const fetchPuzzlesAction = async (
   selectedCategories: MathPuzzleCategory[],
+  selectedDifficultyLevels: MathPuzzleDifficultyLevels[],
   numberOfPuzzles: number
 ) => {
   await connectDB();
@@ -19,6 +25,12 @@ export const fetchPuzzlesAction = async (
             selectedCategories.length === 0
               ? mathPuzzleCategories
               : selectedCategories,
+        },
+        difficulty: {
+          $in:
+            selectedDifficultyLevels.length === 0
+              ? mathPuzzleDifficultyLevels
+              : selectedDifficultyLevels,
         },
       },
     },
@@ -33,13 +45,19 @@ export const fetchPuzzlesAction = async (
 };
 
 export const savePuzzleSessionAction = async (
-  session: Omit<PuzzleSessionServer, "createdAt">
+  session: Omit<PuzzleSessionServer, "createdAt" | "_id">
 ) => {
   try {
     const newSession = await puzzleSessionModel.create(session);
-    if(!newSession) throw new Error("No session found.");
-    const parsedSession: PuzzleSessionServer = JSON.parse(JSON.stringify(newSession));
-    return { success: true, message: "Session saved successfully!", session: parsedSession };
+    if (!newSession) throw new Error("No session found.");
+    const parsedSession: PuzzleSessionServer = JSON.parse(
+      JSON.stringify(newSession)
+    );
+    return {
+      success: true,
+      message: "Session saved successfully!",
+      session: parsedSession,
+    };
   } catch (error) {
     console.error(error);
     return { success: false, message: "Failed to save session." };

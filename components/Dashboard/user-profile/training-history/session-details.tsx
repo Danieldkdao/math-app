@@ -1,33 +1,36 @@
-import { PuzzleSessionServer } from "@/lib/types";
-import Link from "next/link";
-import { Dispatch, SetStateAction } from "react";
+import { PopulatedPuzzleSession, PuzzleSessionServer } from "@/lib/types";
 
-type FinishResultsPropsType = {
-  name: string;
-  puzzleSession: PuzzleSessionServer | null;
-  setEndSession: Dispatch<SetStateAction<boolean>>;
-  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+export const convertTime = (seconds: number) => {
+  const timeString = `${String(Math.floor(seconds / 60)).padStart(
+    2,
+    "0"
+  )}:${String(seconds % 60).padStart(2, "0")}`;
+  return {
+    seconds: seconds.toFixed(1),
+    unit: seconds / 60 < 1 ? "sec" : "min",
+    timeString,
+  };
 };
 
-const FinishResults = ({
-  name,
+const SessionDetails = ({
   puzzleSession,
-  setEndSession,
-  setIsModalOpen,
-}: FinishResultsPropsType) => {
-  if (!puzzleSession) {
+}: {
+  puzzleSession: PuzzleSessionServer | PopulatedPuzzleSession | null;
+}) => {
+  if (!puzzleSession)
     return (
-      <div>
-        <h1 className="text-2xl font-bold text-center mb-2">
-          No Session Found
+      <div className="space-y-2">
+        <h1 className="text-xl font-bold text-center">
+          No Information Available
         </h1>
         <p className="text-gray-600">
-          Looks like we were unable to find one of your sessions. You might have
-          deleted it or it might not have existed in the first place.
+          The details and statistics for this session are unfortunately
+          unavailable at the moment. The details might be non-existent or we
+          might be facing technical difficulties. If so, try to access another
+          session's details or come back at a later time.
         </p>
       </div>
     );
-  }
   const correctPuzzles = puzzleSession.puzzleHistory.filter(
     (item) => item.result === "correct"
   ).length;
@@ -38,17 +41,6 @@ const FinishResults = ({
     (a, b) => a + b.timeSpent,
     0
   );
-  const convertTime = (seconds: number) => {
-    const timeString = `${String(Math.floor(seconds / 60)).padStart(
-      2,
-      "0"
-    )}:${String(seconds % 60).padStart(2, "0")}`;
-    return {
-      seconds: seconds.toFixed(1),
-      unit: seconds / 60 < 1 ? "sec" : "min",
-      timeString,
-    };
-  };
   const averageTimePerPuzzle =
     puzzleSession.puzzleHistory
       .filter((item) => item.result !== "skipped")
@@ -143,19 +135,25 @@ const FinishResults = ({
     },
     {
       title: "Avg. Time (Correct)",
-      value: averageTimeCorrectPuzzle ? 
-        convertTime(averageTimeCorrectPuzzle).unit === "sec"
+      value: averageTimeCorrectPuzzle
+        ? convertTime(averageTimeCorrectPuzzle).unit === "sec"
           ? convertTime(averageTimeCorrectPuzzle).seconds
-          : convertTime(averageTimeCorrectPuzzle).timeString : "Unavailable",
-      unit: averageTimeCorrectPuzzle ? convertTime(averageTimeCorrectPuzzle).unit : "",
+          : convertTime(averageTimeCorrectPuzzle).timeString
+        : "Unavailable",
+      unit: averageTimeCorrectPuzzle
+        ? convertTime(averageTimeCorrectPuzzle).unit
+        : "",
     },
     {
       title: "Avg. Time (Incorrect)",
-      value: averageTimeIncorrectPuzzle ?
-        convertTime(averageTimeIncorrectPuzzle).unit === "sec"
+      value: averageTimeIncorrectPuzzle
+        ? convertTime(averageTimeIncorrectPuzzle).unit === "sec"
           ? convertTime(averageTimeIncorrectPuzzle).seconds
-          : convertTime(averageTimeIncorrectPuzzle).timeString : "Unavailable",
-      unit: averageTimeIncorrectPuzzle ? convertTime(averageTimeIncorrectPuzzle).unit : "",
+          : convertTime(averageTimeIncorrectPuzzle).timeString
+        : "Unavailable",
+      unit: averageTimeIncorrectPuzzle
+        ? convertTime(averageTimeIncorrectPuzzle).unit
+        : "",
     },
     {
       title: "Fastest Puzzle",
@@ -187,34 +185,31 @@ const FinishResults = ({
   ];
 
   const selectedCategories = puzzleSession.settings.selectedCategories;
+  const selectedDifficultyLevels =
+    puzzleSession.settings.selectedDifficultyLevels;
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Session Results</h1>
+      <h1 className="text-xl font-bold">SESSION OVERVIEW</h1>
       <hr className="text-gray-400" />
-      <div className="space-y-4">
-        <p className="text-xl font-medium">
-          Great job, {name}! Here's how you did:
-        </p>
-        <div className="grid grid-cols-3 gap-4">
-          {mainStats.map((item, index) => (
-            <div key={index} className="border rounded-md border-gray-400 p-4">
-              <h1 className="text-lg font-medium text-center text-gray-600">
-                {item.title}
-              </h1>
-              <div className="text-center text-gray-500">
-                <h1>{item.value}</h1>
-                <h1>{item.subtext}</h1>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {mainStats.map((item, index) => (
+          <div key={index} className="border rounded-md border-gray-400 p-4">
+            <h1 className="text-lg font-medium text-center text-gray-600">
+              {item.title}
+            </h1>
+            <div className="text-center text-gray-500">
+              <h1>{item.value}</h1>
+              <h1>{item.subtext}</h1>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
       <hr className="text-gray-400" />
       <h1 className="text-xl font-bold">PERFORMANCE BREAKDOWN</h1>
       <hr className="text-gray-400" />
-      <div className="flex gap-4">
-        <div className="flex-1 border rounded-md border-gray-400 p-4 space-y-2">
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="md:flex-1 border rounded-md border-gray-400 p-4 space-y-2">
           <h1 className="font-medium text-gray-600">PUZZLE RESULTS</h1>
           <div>
             {puzzleResults.map((item, index) => {
@@ -234,7 +229,7 @@ const FinishResults = ({
             })}
           </div>
         </div>
-        <div className="flex-[1.75] border rounded-md border-gray-400 p-4 space-y-2">
+        <div className="md:flex-[1.75] border rounded-md border-gray-400 p-4 space-y-2">
           <h1 className="font-medium text-gray-600">TIMING ANALYSIS</h1>
           <div>
             {timingAnalysis.map((item, index) => {
@@ -273,6 +268,21 @@ const FinishResults = ({
             );
           })}
         </div>
+        <h1 className="text-lg font-medium text-gray-600">
+          Selected Difficulty Levels
+        </h1>
+        <div className="flex items-center gap-2 flex-wrap">
+          {selectedDifficultyLevels.map((item, index) => {
+            return (
+              <p
+                key={index}
+                className="py-1 px-2 rounded-md font-medium text-gray-600 bg-cyan-50 text-sm border border-cyan-800"
+              >
+                {item}
+              </p>
+            );
+          })}
+        </div>
         <div className="w-full max-w-60 mt-4">
           {sessionConfig.map((item, index) => {
             return (
@@ -288,25 +298,8 @@ const FinishResults = ({
           })}
         </div>
       </div>
-      <div className="flex gap-4 flex-wrap">
-        <button
-          onClick={() => {
-            setEndSession(false);
-            setIsModalOpen(true);
-          }}
-          className="py-2 px-5 rounded-md border border-cyan-800 bg-cyan-50 hover:bg-cyan-100 cursor-pointer transition-colors duration-300 ease-in-out text-gray-600 font-medium"
-        >
-          START NEW SESSION
-        </button>
-        <Link
-          href="/user/dashboard"
-          className="py-2 px-5 rounded-md border border-cyan-800 bg-cyan-50 hover:bg-cyan-100 transition-colors duration-300 ease-in-out text-gray-600 font-medium"
-        >
-          RETURN TO DASHBOARD
-        </Link>
-      </div>
     </div>
   );
 };
 
-export default FinishResults;
+export default SessionDetails;

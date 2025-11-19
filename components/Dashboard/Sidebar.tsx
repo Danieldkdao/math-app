@@ -33,7 +33,7 @@ const Sidebar = () => {
   return (
     <div className="sm:w-64 border-r border-gray-400 py-2">
       {sidebarLinks.map((item, index) => {
-        const isMatch = item.url.split("/")[2] === pathname.split("/").at(-1);
+        const isMatch = pathname.includes(item.url);
         return (
           <Link href={item.url} key={index} className="w-full">
             <div

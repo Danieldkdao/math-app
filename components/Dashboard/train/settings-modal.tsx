@@ -6,8 +6,8 @@ import ToggleSwitch from "@/components/General/toggle-switch";
 import { useModal } from "@/hooks/useModal";
 import { useTrain } from "@/hooks/useTrain";
 import { fetchPuzzlesAction } from "@/lib/actions";
-import { MathPuzzleCategory } from "@/lib/types";
-import { mathPuzzleCategories } from "@/lib/utils";
+import { MathPuzzleCategory, MathPuzzleDifficultyLevels } from "@/lib/types";
+import { mathPuzzleCategories, mathPuzzleDifficultyLevels } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
 import { useState } from "react";
@@ -51,15 +51,35 @@ const SettingsModal = () => {
   const [selectedCategories, setSelectedCategories] = useState<
     MathPuzzleCategory[]
   >([]);
+  const [selectedDifficultyLevels, setSelectedDifficultyLevels] = useState<
+    MathPuzzleDifficultyLevels[]
+  >([]);
   const { setIsModalOpen } = useModal();
   const { setTrainPuzzles, setUserSettings } = useTrain();
 
   const startSession = async (formData: SettingsFormType) => {
-    const puzzles = await fetchPuzzlesAction(selectedCategories, formData.numberOfPuzzles);
-    if(!puzzles || puzzles.length === 0) return toast.error("No puzzles found.");
+    const puzzles = await fetchPuzzlesAction(
+      selectedCategories,
+      selectedDifficultyLevels,
+      formData.numberOfPuzzles
+    );
+    if (!puzzles || puzzles.length === 0)
+      return toast.error("No puzzles found.");
     setTrainPuzzles(puzzles);
-    const categories = selectedCategories.length === 0 ? mathPuzzleCategories : selectedCategories;
-    setUserSettings({...formData, selectedCategories: categories, numberOfPuzzles: puzzles.length});
+    const categories =
+      selectedCategories.length === 0
+        ? mathPuzzleCategories
+        : selectedCategories;
+    const difficultyLevels =
+      selectedDifficultyLevels.length === 0
+        ? mathPuzzleDifficultyLevels
+        : selectedDifficultyLevels;
+    setUserSettings({
+      ...formData,
+      selectedCategories: categories,
+      selectedDifficultyLevels: difficultyLevels,
+      numberOfPuzzles: puzzles.length,
+    });
     setIsModalOpen(false);
     reset();
   };
@@ -88,6 +108,40 @@ const SettingsModal = () => {
                       );
                     } else {
                       setSelectedCategories((prev) => [...prev, item]);
+                    }
+                  }}
+                  className={`py-1 px-2 rounded-md border text-gray-600 cursor-pointer hover:bg-cyan-50 active:scale-[98%] transition-color duration-100 ease-in-out text-sm ${
+                    isSelected
+                      ? "border-cyan-800 bg-cyan-100"
+                      : "border-gray-400 bg-gray-100"
+                  }`}
+                >
+                  {item}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <hr className="text-gray-400" />
+        <div className="space-y-2">
+          <h2 className="text-gray-600 font-medium">Difficulty Level</h2>
+          <div className="flex flex-wrap gap-2">
+            {mathPuzzleDifficultyLevels.map((item, index) => {
+              const isSelected = selectedDifficultyLevels.find(
+                (level) => item === level
+              );
+              return (
+                <button
+                  key={index}
+                  onClick={() => {
+                    if (
+                      selectedDifficultyLevels.find((level) => level === item)
+                    ) {
+                      setSelectedDifficultyLevels((prev) =>
+                        prev.filter((level) => level !== item)
+                      );
+                    } else {
+                      setSelectedDifficultyLevels((prev) => [...prev, item]);
                     }
                   }}
                   className={`py-1 px-2 rounded-md border text-gray-600 cursor-pointer hover:bg-cyan-50 active:scale-[98%] transition-color duration-100 ease-in-out text-sm ${

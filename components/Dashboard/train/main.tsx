@@ -5,14 +5,27 @@ import mongoose from "mongoose";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaCheckCircle } from "react-icons/fa";
-import { FaCircleQuestion, FaClock, FaForward } from "react-icons/fa6";
+import {
+  FaChevronRight,
+  FaCircleQuestion,
+  FaClock,
+  FaForward,
+} from "react-icons/fa6";
+import MarkdownRenderer from "@/components/markdown-renderer";
 
 const TrainMain = ({
   endSaveSession,
 }: {
   endSaveSession: () => Promise<void>;
 }) => {
-  const { trainPuzzles, userSettings, setPuzzleHistory, setTrainPuzzles, setUserSettings } = useTrain();
+  const {
+    trainPuzzles,
+    userSettings,
+    puzzleHistory,
+    setPuzzleHistory,
+    setTrainPuzzles,
+    setUserSettings,
+  } = useTrain();
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<number | null>(null);
   const [currentPuzzleResult, setCurrentPuzzleResult] = useState<
@@ -21,6 +34,8 @@ const TrainMain = ({
   const [next, setNext] = useState(false);
   const [totalTimeSec, setTotalTimeSec] = useState<number | null>(null);
   const [timeSpentIndividual, setTimeSpentIndividual] = useState(0);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
 
   useEffect(() => {
     setTotalTimeSec(
@@ -32,16 +47,14 @@ const TrainMain = ({
 
   useEffect(() => {
     if (!userSettings) return;
-    console.log("ran");
     const intervalTimer = setInterval(async () => {
       if (next) return;
       setTimeSpentIndividual((prev) => prev + 1);
-      console.log(timeSpentIndividual);
-      if(totalTimeSec === null) return;
+      if (totalTimeSec === null) return;
       if (totalTimeSec < 1) {
         await finish();
         return;
-      };
+      }
       setTotalTimeSec(totalTimeSec - 1);
     }, 1000);
     return () => clearInterval(intervalTimer);
@@ -85,13 +98,16 @@ const TrainMain = ({
         userAnswer: null,
         result: "skipped",
         timeSpent: timeSpentIndividual,
+        hintUsed,
       };
       setPuzzleHistory((prev) => [...prev, newPuzzleHistory]);
     }
     if (currentPuzzleIndex + 2 > trainPuzzles.length) {
       await finish();
       return;
-    };
+    }
+    setHintUsed(false);
+    setShowSolution(false);
     setTimeSpentIndividual(0);
     setCurrentPuzzleIndex((cpi) => cpi + 1);
     setUserAnswer(null);
@@ -108,6 +124,7 @@ const TrainMain = ({
       userAnswer,
       result,
       timeSpent: timeSpentIndividual,
+      hintUsed,
     };
     setPuzzleHistory((prev) => [...prev, newPuzzleHistory]);
     setCurrentPuzzleResult(result);
@@ -116,8 +133,11 @@ const TrainMain = ({
 
   const finish = async () => {
     await endSaveSession();
+    console.log(puzzleHistory);
     setPuzzleHistory([]);
     setCurrentPuzzleIndex(0);
+    setHintUsed(false);
+    setShowSolution(false);
     setUserAnswer(null);
     setCurrentPuzzleResult(null);
     setNext(false);
@@ -125,7 +145,7 @@ const TrainMain = ({
     setTimeSpentIndividual(0);
     setTrainPuzzles([]);
     setUserSettings(null);
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -138,10 +158,18 @@ const TrainMain = ({
           </h2>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <button className="flex items-center gap-2 cursor-pointer rounded-md py-1 px-2 hover:bg-gray-200">
-            <FaCircleQuestion />
-            Hint
-          </button>
+          {userSettings.hints && (
+            <button
+              onClick={() => {
+                if(next) return;
+                setHintUsed(true)
+              }}
+              className={`flex items-center gap-2 rounded-md py-1 px-2 ${next ? "cursor-not-allowed opacity-60" : "hover:bg-gray-200 cursor-pointer"}`}
+            >
+              <FaCircleQuestion />
+              Hint
+            </button>
+          )}
           <div className="border flex items-center gap-2 py-1 px-2 rounded-md border-gray-400">
             <FaClock />
             <h1 className="font-bold">
@@ -155,18 +183,29 @@ const TrainMain = ({
         </div>
       </div>
       <div className="border rounded-md border-gray-400 p-4 flex flex-col items-start gap-4">
-        <h1 className="bg-cyan-50 py-1 px-2 rounded-md font-medium text-gray-600 text-sm">
-          {currentPuzzle.category}
-        </h1>
+        <div className="flex items-center gap-2">
+          <h1 className="bg-cyan-50 py-1 px-2 rounded-md font-medium text-gray-600 text-sm">
+            {currentPuzzle.category}
+          </h1>
+          <h1 className="bg-cyan-50 py-1 px-2 rounded-md font-medium text-gray-600 text-sm">
+            {currentPuzzle.difficulty}
+          </h1>
+        </div>
         <div className="space-y-2">
           <h1 className="text-xl font-bold line-clamp-1">
-            {currentPuzzle.title}
+            <MarkdownRenderer text={currentPuzzle.title}/>
           </h1>
-          <div className="max-h-[10ch] overflow-auto">
-            <p className="text-lg font-medium text-gray-600">
-              {currentPuzzle.problemText}
-            </p>
+          <div className="max-h-[10ch] overflow-auto text-lg font-medium text-gray-600">
+            <MarkdownRenderer
+              text={currentPuzzle.problemText}
+            />
           </div>
+          {hintUsed && (
+            <div className="text-gray-600 bg-yellow-100 rounded-md py-1 px-2 text-sm flex">
+              Hint💡:
+              <MarkdownRenderer text={currentPuzzle.hint} />
+            </div>
+          )}
         </div>
       </div>
       <div className="space-y-8">
@@ -188,27 +227,81 @@ const TrainMain = ({
           <></>
         ) : currentPuzzleResult === "correct" ? (
           <div className="bg-green-200 p-4 rounded-md border-l-8 border-green-600">
-            Correct! The answer is <strong>{currentPuzzle.answer}</strong>.
+            <div>
+              Correct! The answer is <strong>{currentPuzzle.answer}</strong>.
+            </div>
+            <div>
+              <div
+                onClick={() => setShowSolution(!showSolution)}
+                className="cursor-pointer flex items-center w-full justify-between"
+              >
+                <h1 className="text-gray-600">Show Solution</h1>
+                <FaChevronRight
+                  className={`transition-all duration-300 ease-in-out ${
+                    showSolution ? "rotate-90" : ""
+                  }`}
+                />
+              </div>
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out text-gray-600 ${
+                  showSolution
+                    ? "max-h-96 opacity-100 mt-4"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
+                <MarkdownRenderer
+                  text={currentPuzzle.solutionOutline}
+                />
+              </div>
+            </div>
           </div>
         ) : (
           <div className="bg-red-200 p-4 rounded-md border-l-8 border-red-600">
-            Sorry, incorrect... The answer is{" "}
-            <strong>{currentPuzzle.answer}</strong>.
+            <div>
+              Sorry, incorrect... The answer is{" "}
+              <strong>{currentPuzzle.answer}</strong>.
+            </div>
+            <div>
+              <div
+                onClick={() => setShowSolution(!showSolution)}
+                className="cursor-pointer flex items-center w-full justify-between"
+              >
+                <h1 className="text-gray-600">Show Solution</h1>
+                <FaChevronRight
+                  className={`transition-all duration-300 ease-in-out ${
+                    showSolution ? "rotate-90" : ""
+                  }`}
+                />
+              </div>
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out text-gray-600 ${
+                  showSolution
+                    ? "max-h-96 opacity-100 mt-4"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
+                <MarkdownRenderer
+                  text={currentPuzzle.solutionOutline}
+                />
+              </div>
+            </div>
           </div>
         )}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center sm:justify-between w-full max-w-[300px]">
-          {userSettings.skips && <button
-            disabled={next}
-            onClick={() => nextPuzzle(true)}
-            className={`flex items-center justify-center gap-2 rounded-md py-2 px-5 bg-cyan-50 ${
-              next
-                ? "cursor-not-allowed opacity-60"
-                : "cursor-pointer hover:bg-cyan-100 transition-all duration-300 ease-in-out"
-            }`}
-          >
-            <FaForward />
-            Skip
-          </button>}
+          {userSettings.skips && (
+            <button
+              disabled={next}
+              onClick={() => nextPuzzle(true)}
+              className={`flex items-center justify-center gap-2 rounded-md py-2 px-5 bg-cyan-50 ${
+                next
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer hover:bg-cyan-100 transition-all duration-300 ease-in-out"
+              }`}
+            >
+              <FaForward />
+              Skip
+            </button>
+          )}
           <button
             onClick={next ? () => nextPuzzle(false) : checkAnswer}
             className="flex items-center justify-center gap-2 rounded-md py-2 px-5 bg-cyan-50 cursor-pointer hover:bg-cyan-100 transition-all duration-300 ease-in-out"

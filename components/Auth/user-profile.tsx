@@ -32,7 +32,7 @@ const UserProfile = () => {
           alt="User profile image"
           className="rounded-full"
           width={35}
-          height={36}
+          height={35}
         />
       ) : (
         <FaCircleUser size={35} />
