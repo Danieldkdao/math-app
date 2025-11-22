@@ -1,7 +1,20 @@
-import { FaComments, FaFire, FaHashtag, FaPenFancy, FaSearch } from "react-icons/fa";
+import {
+  FaComments,
+  FaFire,
+  FaHashtag,
+  FaPenFancy,
+  FaSearch,
+} from "react-icons/fa";
 import { FaClockRotateLeft, FaRegCommentDots } from "react-icons/fa6";
 
-const threadFilters = ["All topics", "Help & Hints", "Strategy", "Theory", "Showcase", "Off-topic"];
+const threadFilters = [
+  "All topics",
+  "Help & Hints",
+  "Strategy",
+  "Theory",
+  "Showcase",
+  "Off-topic",
+];
 
 const threads = [
   {
@@ -51,10 +64,12 @@ const DiscussionsPage = () => {
               <FaComments className="text-amber-600" />
               Community Discussions
             </p>
-            <h1 className="text-3xl font-bold text-gray-900">Swap strategies, hints, and insights</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Swap strategies, hints, and insights
+            </h1>
             <p className="text-gray-600 max-w-2xl">
-              Start a new thread or jump into ongoing conversations. Be generous with hints, clear with spoilers, and keep
-              threads focused.
+              Start a new thread or jump into ongoing conversations. Be generous
+              with hints, clear with spoilers, and keep threads focused.
             </p>
           </div>
           <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm text-sm text-gray-700">
@@ -62,7 +77,9 @@ const DiscussionsPage = () => {
               <FaClockRotateLeft className="text-cyan-600" />
               168 active today
             </div>
-            <p className="text-gray-600">Join the latest 5-minute threads to keep your streak.</p>
+            <p className="text-gray-600">
+              Join the latest 5-minute threads to keep your streak.
+            </p>
           </div>
         </header>
 
@@ -92,17 +109,9 @@ const DiscussionsPage = () => {
                 placeholder="What are you exploring? Keep spoilers hidden until the end."
                 className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
               />
-              <div className="flex flex-wrap gap-3">
-                <button className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-cyan-700">
-                  Post thread
-                </button>
-                <button className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm">
-                  Save draft
-                </button>
-                <button className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm">
-                  Preview
-                </button>
-              </div>
+              <button className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-cyan-700">
+                Post thread
+              </button>
             </div>
 
             <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm space-y-3">
@@ -140,7 +149,9 @@ const DiscussionsPage = () => {
                         <FaHashtag className="text-cyan-600" />
                         {thread.category}
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900">{thread.title}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {thread.title}
+                      </h3>
                       <div className="flex flex-wrap gap-2">
                         {thread.badges.map((badge) => (
                           <span
@@ -157,7 +168,9 @@ const DiscussionsPage = () => {
                         <FaRegCommentDots />
                         {thread.replies} replies
                       </span>
-                      <span className="text-xs text-gray-500">Last active {thread.lastActive}</span>
+                      <span className="text-xs text-gray-500">
+                        Last active {thread.lastActive}
+                      </span>
                     </div>
                   </div>
                   <div className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
@@ -177,7 +190,8 @@ const DiscussionsPage = () => {
               </div>
               <ul className="mt-3 space-y-3 text-sm text-gray-800">
                 <li className="rounded-xl bg-white px-4 py-3 shadow-sm ring-1 ring-amber-100">
-                  Speed-solving: best ways to triage a geometry puzzle in 2 minutes.
+                  Speed-solving: best ways to triage a geometry puzzle in 2
+                  minutes.
                 </li>
                 <li className="rounded-xl bg-white px-4 py-3 shadow-sm ring-1 ring-amber-100">
                   Didactics: how to write hints that nudge without spoiling.

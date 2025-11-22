@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { AppContextProvider } from "@/hooks/useApp";
 import { ModalContextProvider } from "@/hooks/useModal";
 import { TrainContextProvider } from "@/hooks/useTrain";
+import { AIChatContextProvider } from "@/hooks/useAIChat";
 
 export const metadata: Metadata = {
   title: "Math App",
@@ -20,22 +21,24 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <main className="flex flex-col items-center justify-center w-full">
-          <ModalContextProvider>
-            <TrainContextProvider>
-              <AppContextProvider>
-                {children}
-                <Toaster
-                  position="top-center"
-                  toastOptions={{
-                    className: "z-[10000]",
-                    style: {
-                      zIndex: 10000,
-                    },
-                  }}
-                />
-              </AppContextProvider>
-            </TrainContextProvider>
-          </ModalContextProvider>
+          <AIChatContextProvider>
+            <ModalContextProvider>
+              <TrainContextProvider>
+                <AppContextProvider>
+                  {children}
+                  <Toaster
+                    position="top-center"
+                    toastOptions={{
+                      className: "z-[10000]",
+                      style: {
+                        zIndex: 10000,
+                      },
+                    }}
+                  />
+                </AppContextProvider>
+              </TrainContextProvider>
+            </ModalContextProvider>
+          </AIChatContextProvider>
         </main>
       </body>
     </html>

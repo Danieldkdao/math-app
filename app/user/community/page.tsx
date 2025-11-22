@@ -84,7 +84,6 @@ const CommunityPage = () => {
             </div>
           </div>
         </header>
-
         <section className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
@@ -117,7 +116,6 @@ const CommunityPage = () => {
                 </div>
               ))}
             </div>
-
             <div className="rounded-xl border border-dashed border-cyan-200 bg-cyan-50/50 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="space-y-1">
                 <h4 className="text-sm font-semibold text-cyan-900">Feature your puzzle</h4>
@@ -131,7 +129,6 @@ const CommunityPage = () => {
               </Link>
             </div>
           </div>
-
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
             <div className="flex items-center gap-2">
               <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-700">
@@ -166,7 +163,6 @@ const CommunityPage = () => {
             </Link>
           </div>
         </section>
-
         <section className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col gap-4">
             <div className="flex items-center justify-between">
@@ -212,7 +208,6 @@ const CommunityPage = () => {
               Open AI math chat
             </Link>
           </div>
-
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
             <div className="flex items-center gap-2">
               <div className="h-10 w-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700">

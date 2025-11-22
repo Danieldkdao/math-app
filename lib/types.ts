@@ -72,3 +72,21 @@ export type PopulatedPuzzleSession = Omit<PuzzleSessionServer, "puzzleHistory"> 
     Omit<SessionPuzzle, "puzzleId"> & { puzzleId: MathPuzzle }
   >;
 };
+
+export type ChatSession = {
+  chats: Chat[],
+  user: string;
+  createdAt: Date;
+  _id: string;
+}
+
+export type Chat = {
+  role: "user" | "assistant",
+  content: string;
+  _id: string;
+}
+
+export type NoIdChat = {
+  role: "user" | "assistant",
+  content: string;
+}
