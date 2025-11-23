@@ -11,7 +11,7 @@ import {
   FaClock,
   FaForward,
 } from "react-icons/fa6";
-import MarkdownRenderer from "@/components/markdown-renderer";
+import MarkdownRenderer from "@/components/General/markdown-renderer";
 
 const TrainMain = ({
   endSaveSession,
@@ -27,7 +27,7 @@ const TrainMain = ({
     setUserSettings,
   } = useTrain();
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
-  const [userAnswer, setUserAnswer] = useState<number | null>(null);
+  const [userAnswer, setUserAnswer] = useState("");
   const [currentPuzzleResult, setCurrentPuzzleResult] = useState<
     "correct" | "incorrect" | null
   >(null);
@@ -95,7 +95,7 @@ const TrainMain = ({
     if (skipped) {
       const newPuzzleHistory: SessionPuzzle = {
         puzzleId: new mongoose.Types.ObjectId(currentPuzzle._id),
-        userAnswer: null,
+        userAnswer: "",
         result: "skipped",
         timeSpent: timeSpentIndividual,
         hintUsed,
@@ -110,7 +110,7 @@ const TrainMain = ({
     setShowSolution(false);
     setTimeSpentIndividual(0);
     setCurrentPuzzleIndex((cpi) => cpi + 1);
-    setUserAnswer(null);
+    setUserAnswer("");
     setCurrentPuzzleResult(null);
     setNext(false);
   };
@@ -118,7 +118,7 @@ const TrainMain = ({
   const checkAnswer = () => {
     if (!userAnswer) return toast.error("Answer cannot be empty.");
     const result =
-      userAnswer === currentPuzzle.answer ? "correct" : "incorrect";
+      currentPuzzle.answers.find(item => item.trim() === userAnswer.trim()) ? "correct" : "incorrect";
     const newPuzzleHistory: SessionPuzzle = {
       puzzleId: new mongoose.Types.ObjectId(currentPuzzle._id),
       userAnswer,
@@ -138,7 +138,7 @@ const TrainMain = ({
     setCurrentPuzzleIndex(0);
     setHintUsed(false);
     setShowSolution(false);
-    setUserAnswer(null);
+    setUserAnswer("");
     setCurrentPuzzleResult(null);
     setNext(false);
     setTotalTimeSec(null);
@@ -161,10 +161,14 @@ const TrainMain = ({
           {userSettings.hints && (
             <button
               onClick={() => {
-                if(next) return;
-                setHintUsed(true)
+                if (next) return;
+                setHintUsed(true);
               }}
-              className={`flex items-center gap-2 rounded-md py-1 px-2 ${next ? "cursor-not-allowed opacity-60" : "hover:bg-gray-200 cursor-pointer"}`}
+              className={`flex items-center gap-2 rounded-md py-1 px-2 ${
+                next
+                  ? "cursor-not-allowed opacity-60"
+                  : "hover:bg-gray-200 cursor-pointer"
+              }`}
             >
               <FaCircleQuestion />
               Hint
@@ -193,12 +197,10 @@ const TrainMain = ({
         </div>
         <div className="space-y-2">
           <h1 className="text-xl font-bold line-clamp-1">
-            <MarkdownRenderer text={currentPuzzle.title}/>
+            <MarkdownRenderer text={currentPuzzle.title} />
           </h1>
           <div className="max-h-[10ch] overflow-auto text-lg font-medium text-gray-600">
-            <MarkdownRenderer
-              text={currentPuzzle.problemText}
-            />
+            <MarkdownRenderer text={currentPuzzle.problemText} />
           </div>
           {hintUsed && (
             <div className="text-gray-600 bg-yellow-100 rounded-md py-1 px-2 text-sm flex">
@@ -212,23 +214,23 @@ const TrainMain = ({
         <div className="flex flex-col sm:flex-row md:items-center gap-2">
           <label htmlFor="answer">Your answer:</label>
           <input
-            type="number"
-            value={userAnswer === null ? "" : userAnswer}
-            onChange={(e) =>
-              setUserAnswer(
-                e.target.value.trim() === "" ? null : Number(e.target.value)
-              )
-            }
+            type="text"
+            value={userAnswer}
+            onChange={(e) => setUserAnswer(e.target.value.trim())}
             id="answer"
             className="border-b-2 border-gray-600 outline-0 w-20"
           />
         </div>
-        {currentPuzzleResult === null ? (
-          <></>
-        ) : currentPuzzleResult === "correct" ? (
+        {currentPuzzleResult !== null && currentPuzzleResult === "correct" ? (
           <div className="bg-green-200 p-4 rounded-md border-l-8 border-green-600">
             <div>
-              Correct! The answer is <strong>{currentPuzzle.answer}</strong>.
+              Correct!{" "}
+              {`${
+                currentPuzzle.answers.length > 1
+                  ? "The answers are"
+                  : "The answer is"
+              } ${currentPuzzle.answers.join(", ")}`}
+              .
             </div>
             <div>
               <div
@@ -249,17 +251,20 @@ const TrainMain = ({
                     : "max-h-0 opacity-0"
                 }`}
               >
-                <MarkdownRenderer
-                  text={currentPuzzle.solutionOutline}
-                />
+                <MarkdownRenderer text={currentPuzzle.solutionOutline} />
               </div>
             </div>
           </div>
         ) : (
           <div className="bg-red-200 p-4 rounded-md border-l-8 border-red-600">
             <div>
-              Sorry, incorrect... The answer is{" "}
-              <strong>{currentPuzzle.answer}</strong>.
+              Sorry, incorrect...{" "}
+              {`${
+                currentPuzzle.answers.length > 1
+                  ? "The answers are"
+                  : "The answer is"
+              } ${currentPuzzle.answers.join(", ")}`}
+              .
             </div>
             <div>
               <div
@@ -280,9 +285,7 @@ const TrainMain = ({
                     : "max-h-0 opacity-0"
                 }`}
               >
-                <MarkdownRenderer
-                  text={currentPuzzle.solutionOutline}
-                />
+                <MarkdownRenderer text={currentPuzzle.solutionOutline} />
               </div>
             </div>
           </div>

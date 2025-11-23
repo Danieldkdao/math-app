@@ -28,7 +28,7 @@ const UserSettingsSchema = new Schema<UserSettings>(
 const SessionPuzzleSchema = new Schema<SessionPuzzle>(
   {
     puzzleId: { type: Schema.Types.ObjectId, ref: "MathPuzzles" },
-    userAnswer: { type: Number },
+    userAnswer: { type: String, required: true },
     result: { type: String, enum: ["correct", "incorrect", "skipped"] },
     timeSpent: { type: Number, required: true },
     hintUsed: { type: Boolean, required: true },

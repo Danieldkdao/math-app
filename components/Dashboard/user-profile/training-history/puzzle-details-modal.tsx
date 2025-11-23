@@ -2,7 +2,7 @@ import Modal from "@/components/General/modal";
 import { useModal } from "@/hooks/useModal";
 import { PuzzleSessionDetails } from "@/lib/types";
 import { convertTime } from "./session-details";
-import MarkdownRenderer from "@/components/markdown-renderer";
+import MarkdownRenderer from "@/components/General/markdown-renderer";
 
 const resultStyles: Record<
   PuzzleSessionDetails["result"],
@@ -95,10 +95,10 @@ const PuzzleDetailsModal = ({
             </div>
             <div className="border border-gray-200 rounded-xl p-4 bg-white">
               <p className="text-xs text-gray-500 font-medium">
-                Correct Answer
+                Correct Answer/s
               </p>
               <p className="mt-1 text-lg font-semibold text-gray-800">
-                {puzzleId.answer}
+                {puzzleId.answers.join(", ")}
               </p>
             </div>
             <div className="border border-gray-200 rounded-xl p-4 bg-white">

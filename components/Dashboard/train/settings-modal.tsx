@@ -6,7 +6,7 @@ import ToggleSwitch from "@/components/General/toggle-switch";
 import { useModal } from "@/hooks/useModal";
 import { useTrain } from "@/hooks/useTrain";
 import { fetchPuzzlesAction } from "@/lib/actions";
-import { MathPuzzleCategory, MathPuzzleDifficultyLevels } from "@/lib/types";
+import { MathPuzzleCategory, MathPuzzleDifficultyLevel } from "@/lib/types";
 import { mathPuzzleCategories, mathPuzzleDifficultyLevels } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
@@ -52,7 +52,7 @@ const SettingsModal = () => {
     MathPuzzleCategory[]
   >([]);
   const [selectedDifficultyLevels, setSelectedDifficultyLevels] = useState<
-    MathPuzzleDifficultyLevels[]
+    MathPuzzleDifficultyLevel[]
   >([]);
   const { setIsModalOpen } = useModal();
   const { setTrainPuzzles, setUserSettings } = useTrain();

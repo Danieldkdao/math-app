@@ -1,5 +1,5 @@
 import Modal from "@/components/General/modal";
-import PreviousConversationClient from "../previous-conversation-client";
+import PreviousConversationClient from "./previous-conversation-client";
 import { connectDB } from "@/db/db";
 import chatSessionModel from "@/db/schemas/chat-session-model";
 import { headers } from "next/headers";

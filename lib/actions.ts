@@ -4,8 +4,12 @@ import mathPuzzleModel from "@/db/schemas/math-puzzle-model";
 import {
   ChatSession,
   MathPuzzleCategory,
-  MathPuzzleDifficultyLevels,
+  MathPuzzleDifficultyLevel,
   PuzzleSessionServer,
+  type MathCommunityPuzzleDraft,
+  type Thread,
+  type ThreadCategories,
+  type ThreadReply,
 } from "./types";
 import { connectDB } from "@/db/db";
 import { mathPuzzleCategories, mathPuzzleDifficultyLevels } from "./utils";
@@ -15,10 +19,14 @@ import { NoIdChat } from "@/lib/types";
 import { headers } from "next/headers";
 import { auth } from "./auth/auth";
 import chatSessionModel from "@/db/schemas/chat-session-model";
+import mongoose from "mongoose";
+import threadModel from "@/db/schemas/thread-model";
+import puzzleDraftModel from "@/db/schemas/puzzle-draft-model";
+import communityPuzzleModel from "@/db/schemas/community-puzzle-model";
 
 export const fetchPuzzlesAction = async (
   selectedCategories: MathPuzzleCategory[],
-  selectedDifficultyLevels: MathPuzzleDifficultyLevels[],
+  selectedDifficultyLevels: MathPuzzleDifficultyLevel[],
   numberOfPuzzles: number
 ) => {
   await connectDB();
@@ -131,9 +139,94 @@ export const chatWithMathAIAction = async (
 export const deleteChatSessionAction = async (sessionId: string) => {
   try {
     await chatSessionModel.findByIdAndDelete(sessionId);
-    return {success: true, message: "Chat session deleted successfully!"}
+    return { success: true, message: "Chat session deleted successfully!" };
   } catch (error) {
     console.error(error);
-    return {success: false, message: "Failed to delete chat session."};
+    return { success: false, message: "Failed to delete chat session." };
+  }
+};
+
+export const createThreadAction = async (
+  title: string,
+  prompt: string,
+  category: ThreadCategories
+) => {
+  const h = await headers();
+  const session = await auth.api.getSession({ headers: h });
+  if (!session)
+    return {
+      success: false,
+      message: "You must be logged in to create a thread.",
+    };
+  const newThread: Omit<Thread, "_id" | "createdAt"> = {
+    title,
+    threadPrompt: prompt,
+    startedBy: new mongoose.Types.ObjectId(session.user.id),
+    category,
+    replies: [],
+  };
+  try {
+    await threadModel.create(newThread);
+    return { success: true, message: "New thread created successfully!" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Failed to create new thread." };
+  }
+};
+
+export const postThreadReplyAction = async (
+  threadId: string,
+  content: string
+) => {
+  const h = await headers();
+  const session = await auth.api.getSession({ headers: h });
+  if (!session)
+    return {
+      success: false,
+      message: "You must be signed in to engage in discussions.",
+    };
+  const newReply: Omit<ThreadReply, "_id" | "createdAt"> = {
+    author: {
+      name: session.user.name,
+      image: session.user.image,
+      id: session.user.id,
+    },
+    content,
+  };
+  try {
+    await threadModel.findByIdAndUpdate(threadId, {
+      $push: { replies: newReply },
+    });
+    return { success: true, message: "Reply posted successfully!" };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Failed to post reply. Please try again later.",
+    };
+  }
+};
+
+export const createSavePuzzleDraftAction = async (
+  puzzleDraft: Omit<MathCommunityPuzzleDraft, "_id" | "createdAt" | "updatedAt">
+) => {
+  try {
+    await puzzleDraftModel.create(puzzleDraft);
+    return { success: true, message: "Puzzle draft saved successfully!" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Failed to save puzzle draft." };
+  }
+};
+
+export const publishCommunityMathPuzzleAction = async (
+  puzzleDraft: Omit<MathCommunityPuzzleDraft, "_id" | "createdAt" | "updatedAt">
+) => {
+  try {
+    await communityPuzzleModel.create(puzzleDraft);
+    return { success: true, message: "Puzzle published successfully!" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Failed to publish puzzle." };
   }
 };

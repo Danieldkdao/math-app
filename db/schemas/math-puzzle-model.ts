@@ -10,7 +10,7 @@ const MathPuzzleSchema = new Schema<MathPuzzleSchemaType>({
   category: { type: String, required: true, enum: mathPuzzleCategories },
   problemText: { type: String, required: true },
   solutionOutline: { type: String, required: true },
-  answer: { type: Number, required: true },
+  answers: { type: [String], required: true },
   hint: { type: String, required: true },
 });
 

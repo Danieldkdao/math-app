@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
 import { chatWithMathAIAction } from "@/lib/actions";
-import MarkdownRenderer from "@/components/markdown-renderer";
+import MarkdownRenderer from "@/components/General/markdown-renderer";
 import { NoIdChat } from "@/lib/types";
 import { redirect } from "next/navigation";
 import { FaHistory } from "react-icons/fa";
@@ -82,7 +82,7 @@ const Chatbox = () => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if(!prompt.trim()) return;
+    if (!prompt.trim()) return;
     if (e.key === "Enter" && !e.shiftKey) {
       sendChat();
     }

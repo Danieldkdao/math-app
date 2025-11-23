@@ -1,5 +1,7 @@
-"use client";
-
+import { connectDB } from "@/db/db";
+import threadModel from "@/db/schemas/thread-model";
+import type { Thread } from "@/lib/types";
+import { timeAgo } from "@/lib/utils";
 import Link from "next/link";
 import { FaComments, FaLightbulb, FaRobot } from "react-icons/fa";
 import { FaArrowRightLong, FaFireFlameCurved } from "react-icons/fa6";
@@ -38,7 +40,12 @@ const threadsPreview = [
   },
 ];
 
-const CommunityPage = () => {
+const CommunityPage = async () => {
+  await connectDB();
+  const threadData = await threadModel.find().sort({ createdAt: -1, _id: -1 }).limit(3);
+  const latestThreads: Thread[] = threadData.map((item) =>
+    JSON.parse(JSON.stringify(item))
+  );
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-6xl space-y-8 px-4 py-8">
@@ -49,10 +56,13 @@ const CommunityPage = () => {
           </div>
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-gray-900">Build, discuss, and solve together</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Build, discuss, and solve together
+              </h1>
               <p className="text-gray-600 max-w-2xl">
-                Preview what the community is building, chatting about, and exploring with the AI coach. Jump into the
-                dedicated pages for the full experience.
+                Preview what the community is building, chatting about, and
+                exploring with the AI coach. Jump into the dedicated pages for
+                the full experience.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -88,10 +98,17 @@ const CommunityPage = () => {
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-cyan-700">Community Puzzles</p>
-                <h2 className="text-xl font-semibold text-gray-900">Curated feeds for builders and solvers</h2>
+                <p className="text-xs uppercase tracking-[0.2em] text-cyan-700">
+                  Community Puzzles
+                </p>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Curated feeds for builders and solvers
+                </h2>
               </div>
-              <Link href="/user/community/puzzles" className="text-sm font-semibold text-cyan-700 hover:text-cyan-900 transition">
+              <Link
+                href="/user/community/puzzles"
+                className="text-sm font-semibold text-cyan-700 hover:text-cyan-900 transition"
+              >
                 View all
               </Link>
             </div>
@@ -101,14 +118,21 @@ const CommunityPage = () => {
                   key={index}
                   className="group overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className={`h-1 w-full bg-gradient-to-r ${card.color}`} />
+                  <div
+                    className={`h-1 w-full bg-gradient-to-r ${card.color}`}
+                  />
                   <div className="space-y-3 p-4">
                     <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-gray-700 shadow-sm ring-1 ring-gray-100">
                       {card.badge}
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">{card.title}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {card.title}
+                    </h3>
                     <p className="text-sm text-gray-600">{card.description}</p>
-                    <Link href="/user/community/puzzles" className="flex items-center gap-2 text-sm font-semibold text-cyan-700">
+                    <Link
+                      href="/user/community/puzzles"
+                      className="flex items-center gap-2 text-sm font-semibold text-cyan-700"
+                    >
                       Explore feed
                       <FaArrowRightLong />
                     </Link>
@@ -118,8 +142,13 @@ const CommunityPage = () => {
             </div>
             <div className="rounded-xl border border-dashed border-cyan-200 bg-cyan-50/50 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="space-y-1">
-                <h4 className="text-sm font-semibold text-cyan-900">Feature your puzzle</h4>
-                <p className="text-sm text-cyan-800">Submit to the spotlight queue and collect feedback from top solvers.</p>
+                <h4 className="text-sm font-semibold text-cyan-900">
+                  Feature your puzzle
+                </h4>
+                <p className="text-sm text-cyan-800">
+                  Submit to the spotlight queue and collect feedback from top
+                  solvers.
+                </p>
               </div>
               <Link
                 href="/user/community/puzzles/create"
@@ -135,24 +164,40 @@ const CommunityPage = () => {
                 <FaComments />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-orange-700">Discussions</p>
-                <h2 className="text-lg font-semibold text-gray-900">Community threads preview</h2>
+                <p className="text-xs uppercase tracking-[0.2em] text-orange-700">
+                  Discussions
+                </p>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Community threads preview
+                </h2>
               </div>
             </div>
             <div className="grid gap-3">
-              {threadsPreview.map((thread, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm"
+              {latestThreads.map((thread) => (
+                <Link
+                  key={thread._id}
+                  href={`/user/community/discussions/thread/${thread._id}`}
                 >
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-gray-900">{thread.title}</p>
-                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                      {thread.status}
-                    </span>
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold text-gray-900">
+                        {thread.title}
+                      </p>
+                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                        Active
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600">{`${
+                      thread.replies.length
+                    } replies · ${
+                      thread.replies.length > 0
+                        ? timeAgo(
+                            thread.replies[thread.replies.length - 1].createdAt
+                          )
+                        : "None"
+                    }`}</p>
                   </div>
-                  <p className="text-xs text-gray-600">{thread.meta}</p>
-                </div>
+                </Link>
               ))}
             </div>
             <Link
@@ -167,8 +212,12 @@ const CommunityPage = () => {
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-emerald-700">AI Chatbot</p>
-                <h2 className="text-xl font-semibold text-gray-900">Ask for hints, ideas, or solutions</h2>
+                <p className="text-xs uppercase tracking-[0.2em] text-emerald-700">
+                  AI Chatbot
+                </p>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Ask for hints, ideas, or solutions
+                </h2>
               </div>
               <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
                 <FaRobot />
@@ -177,7 +226,8 @@ const CommunityPage = () => {
             </div>
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <p className="text-sm text-gray-700">
-                "Need a nudge? Ask the AI coach for a tailored hint while keeping the solution spoiler-free."
+                "Need a nudge? Ask the AI coach for a tailored hint while
+                keeping the solution spoiler-free."
               </p>
             </div>
             <div className="rounded-xl border border-dashed border-emerald-200 bg-white p-4 shadow-inner">
@@ -194,8 +244,14 @@ const CommunityPage = () => {
                   <div className="mt-2 h-12 rounded-lg bg-emerald-50/70 p-3 text-sm text-emerald-900">
                     <div className="flex gap-1">
                       <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500"></span>
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" style={{ animationDelay: "0.15s" }}></span>
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" style={{ animationDelay: "0.3s" }}></span>
+                      <span
+                        className="h-2 w-2 animate-pulse rounded-full bg-emerald-400"
+                        style={{ animationDelay: "0.15s" }}
+                      ></span>
+                      <span
+                        className="h-2 w-2 animate-pulse rounded-full bg-emerald-300"
+                        style={{ animationDelay: "0.3s" }}
+                      ></span>
                     </div>
                   </div>
                 </div>
@@ -214,12 +270,17 @@ const CommunityPage = () => {
                 <FaLightbulb />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-cyan-700">Creator Corner</p>
-                <h2 className="text-lg font-semibold text-gray-900">Prep your next puzzle</h2>
+                <p className="text-xs uppercase tracking-[0.2em] text-cyan-700">
+                  Creator Corner
+                </p>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Prep your next puzzle
+                </h2>
               </div>
             </div>
             <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
-              Quick guides and formatting tips to make your puzzle stand out in the community feeds.
+              Quick guides and formatting tips to make your puzzle stand out in
+              the community feeds.
             </div>
             <Link
               href="/user/community/puzzles/create"
