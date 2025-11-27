@@ -2,7 +2,7 @@ import SessionCard from "@/components/Dashboard/user-profile/training-history/se
 import { connectDB } from "@/db/db";
 import puzzleSessionModel from "@/db/schemas/puzzle-session-model";
 import { auth } from "@/lib/auth/auth";
-import { PuzzleSessionServer } from "@/lib/types";
+import { PuzzleSessionServer, type PopulatedPuzzleSession } from "@/lib/types";
 import { headers } from "next/headers";
 import Link from "next/link";
 
@@ -39,7 +39,7 @@ const SessionHistoryPage = async () => {
         </div>
       </div>
     );
-  const puzzleSessionHistory: PuzzleSessionServer[] = data.map((item) =>
+  const puzzleSessionHistory: PopulatedPuzzleSession[] = data.map((item) =>
     JSON.parse(JSON.stringify(item))
   );
   return (

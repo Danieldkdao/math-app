@@ -1,6 +1,7 @@
 import type { MathCommunityPuzzleDraft } from "@/lib/types";
 import { mathPuzzleCategories, mathPuzzleDifficultyLevels } from "@/lib/utils";
 import mongoose, { Document, Schema, Model } from "mongoose";
+import { AuthorSchema } from "./thread-model";
 
 type PuzzleDraftSchemaType = MathCommunityPuzzleDraft & Document;
 
@@ -17,7 +18,7 @@ const PuzzleDraftSchema = new Schema<PuzzleDraftSchemaType>(
     answers: { type: [String] },
     hint: { type: String },
     solutionOutline: { type: String },
-    user: { type: String, required: true },
+    user: { type: AuthorSchema, required: true },
   },
   { timestamps: true }
 );

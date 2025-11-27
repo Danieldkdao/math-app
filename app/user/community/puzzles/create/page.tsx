@@ -2,11 +2,15 @@ import {
   FaCheckCircle,
   FaFeatherAlt,
   FaLayerGroup,
-  FaLightbulb,
   FaMagic,
   FaRocket,
 } from "react-icons/fa";
-import CreatePuzzleForm from "@/components/Dashboard/create/create-puzzle-form";
+import CreatePuzzleForm from "@/components/Dashboard/community/puzzles/create/create-puzzle-form";
+import { auth } from "@/lib/auth/auth";
+import { headers } from "next/headers";
+import puzzleDraftModel from "@/db/schemas/puzzle-draft-model";
+import type { MathCommunityPuzzleDraft } from "@/lib/types";
+import mongoose from "mongoose";
 
 const outlineSteps = [
   {
@@ -31,7 +35,33 @@ const outlineSteps = [
   },
 ];
 
-const CreatePuzzlePage = () => {
+const CreatePuzzlePage = async (
+  props: PageProps<"/user/community/puzzles/create">
+) => {
+  const h = await headers();
+  const session = await auth.api.getSession({ headers: h });
+  if (session == null) return;
+
+  const searchParams = await props.searchParams;
+  const draftParams = searchParams.draft;
+
+  const draftId = draftParams
+    ? Array.isArray(draftParams)
+      ? null
+      : draftParams
+    : null;
+
+  const validId = mongoose.Types.ObjectId;
+
+  let data = null;
+
+  if (validId.isValid(draftId || "")) {
+    data = await puzzleDraftModel.findById(draftId);
+  }
+  const puzzleDraft: MathCommunityPuzzleDraft | null = JSON.parse(
+    JSON.stringify(data)
+  );
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-5xl space-y-8 px-4 py-8">
@@ -64,7 +94,15 @@ const CreatePuzzlePage = () => {
           </div>
         </header>
         <section className="grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
-          <CreatePuzzleForm />
+          <CreatePuzzleForm
+            user={{
+              id: session.user.id,
+              name: session.user.name,
+              image: session.user.image,
+            }}
+            puzzleDraft={puzzleDraft}
+            draftId={draftId}
+          />
           <aside className="space-y-4">
             <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-3">
               <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100">

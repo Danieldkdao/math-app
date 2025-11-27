@@ -1,46 +1,25 @@
 import Link from "next/link";
-import { FaArrowLeft, FaArrowRight, FaComments, FaMessage } from "react-icons/fa6";
+import {
+  FaArrowLeft,
+  FaComments,
+  FaMessage,
+} from "react-icons/fa6";
 import { FaClock } from "react-icons/fa";
+import { connectDB } from "@/db/db";
+import threadModel from "@/db/schemas/thread-model";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth/auth";
+import { timeAgo } from "@/lib/utils";
 
-const threads = [
-  {
-    title: "Is there a slick proof for Vandermonde’s identity?",
-    category: "Algebra",
-    threadPrompt: "Looking for an intuitive argument that avoids heavy algebra.",
-    replies: 12,
-    createdAt: "2h ago",
-  },
-  {
-    title: "Visual intuition for Green’s Theorem",
-    category: "Calculus",
-    threadPrompt: "How do you picture the curl vs divergence pieces in simple regions?",
-    replies: 7,
-    createdAt: "20h ago",
-  },
-  {
-    title: "Favourite counterexamples in topology",
-    category: "Topology",
-    threadPrompt: "Share your go-to spaces that break common intuitions.",
-    replies: 18,
-    createdAt: "4d ago",
-  },
-  {
-    title: "Fast sanity checks for limits",
-    category: "Analysis",
-    threadPrompt: "What are your quickest heuristics before epsilon-delta proofs?",
-    replies: 5,
-    createdAt: "1w ago",
-  },
-  {
-    title: "Cauchy-Schwarz equality condition intuition",
-    category: "Algebra",
-    threadPrompt: "Geometric view for when the inequality becomes equality.",
-    replies: 9,
-    createdAt: "2w ago",
-  },
-];
-
-const UserThreadsPage = () => {
+const UserThreadsPage = async () => {
+  const h = await headers();
+  const session = await auth.api.getSession({ headers: h });
+  if (session == null) return;
+  await connectDB();
+  const data = await threadModel
+    .find({ startedBy: session.user.id })
+    .sort({ createdAt: -1, _id: -1 });
+  const threads = data.map((item) => JSON.parse(JSON.stringify(item)));
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-[900px] bg-gray-50 rounded-md border border-gray-400 p-6 space-y-6">
@@ -52,44 +31,57 @@ const UserThreadsPage = () => {
             </div>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Your Threads</h1>
-          <div className="inline-flex items-center gap-2 text-sm text-gray-600">
-            <FaComments className="text-cyan-700" />
-            Stored thread fields: title, category, prompt, replies, timestamps
-          </div>
         </div>
 
-        <div className="grid gap-4">
-          {threads.map((thread, idx) => (
-            <div key={idx} className="rounded-md border border-gray-300 bg-white p-4 shadow-sm space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800">
-                  <FaComments className="text-cyan-700" />
-                  {thread.title}
-                </div>
-                <span className="px-2 py-1 rounded-md bg-cyan-50 text-cyan-700 ring-1 ring-cyan-100 text-xs font-semibold">
-                  {thread.category}
-                </span>
-              </div>
-              <p className="text-sm text-gray-700">{thread.threadPrompt}</p>
-              <div className="flex items-center justify-between text-xs font-semibold text-gray-600">
-                <span className="inline-flex items-center gap-1">
-                  <FaMessage className="text-gray-500" />
-                  {thread.replies} replies
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <FaClock className="text-gray-500" />
-                  {thread.createdAt}
-                </span>
-              </div>
+        {threads.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-gray-300 bg-white p-6 text-center text-gray-700">
+            <div className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800">
+              <FaComments className="text-cyan-700" />
+              You haven&apos;t started any threads
             </div>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-center gap-3 text-sm font-semibold text-gray-700">
-          <span className="px-3 py-1 rounded-md bg-gray-100 ring-1 ring-gray-200">Showing {threads.length} threads</span>
-          <FaArrowRight className="text-gray-400" />
-          <span className="text-gray-500">All data shown from thread schema fields</span>
-        </div>
+            <p className="text-sm text-gray-600">
+              Start a discussion to ask for hints, share progress, or invite feedback from the community.
+            </p>
+            <Link
+              href="/user/community/discussions"
+              className="inline-flex items-center gap-2 rounded-md bg-cyan-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-cyan-700"
+            >
+              Create a thread
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {threads.map((thread) => (
+              <Link
+                key={thread._id}
+                href={`/user/community/discussions/thread/${thread._id}`}
+              >
+                <div className="rounded-md border border-gray-300 bg-white p-4 shadow-sm space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800">
+                      <FaComments className="text-cyan-700" />
+                      {thread.title}
+                    </div>
+                    <span className="px-2 py-1 rounded-md bg-cyan-50 text-cyan-700 ring-1 ring-cyan-100 text-xs font-semibold">
+                      {thread.category}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700">{thread.threadPrompt}</p>
+                  <div className="flex items-center justify-between text-xs font-semibold text-gray-600">
+                    <span className="inline-flex items-center gap-1">
+                      <FaMessage className="text-gray-500" />
+                      {thread.replies.length} replies
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <FaClock className="text-gray-500" />
+                      {timeAgo(thread.createdAt)}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

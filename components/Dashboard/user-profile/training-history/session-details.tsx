@@ -90,7 +90,7 @@ const SessionDetails = ({
     },
     {
       title: "ACCURACY",
-      value: `${((correctPuzzles / puzzlesAttempted) * 100).toFixed(1)}%`,
+      value: puzzlesAttempted > 0 ? `${((correctPuzzles / puzzlesAttempted) * 100).toFixed(1)}%` : "Unavailable",
       subtext: "(Correct/Attempted)",
     },
     {

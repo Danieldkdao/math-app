@@ -12,13 +12,14 @@ import {
 import { FaLightbulb } from "react-icons/fa";
 import { mathPuzzleDifficultyLevels, mathPuzzleCategories } from "@/lib/utils";
 import type {
+  Author,
+  MathCommunityPuzzleDraft,
   MathPuzzle,
   MathPuzzleCategory,
   MathPuzzleDifficultyLevel,
 } from "@/lib/types";
 import { z } from "zod";
 import toast from "react-hot-toast";
-import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 import {
   createSavePuzzleDraftAction,
@@ -27,28 +28,46 @@ import {
 import LoadingSpinner from "@/components/General/loading-spinner";
 
 const PuzzleEditor = dynamic(
-  () => import("@/components/Dashboard/create/PuzzleEditor"),
+  () => import("@/components/Dashboard/community/puzzles/create/PuzzleEditor"),
   {
     ssr: false,
   }
 );
 
-const CreatePuzzleForm = () => {
+const CreatePuzzleForm = ({
+  user,
+  draftId,
+  puzzleDraft,
+}: {
+  user: Author;
+  draftId: string | null;
+  puzzleDraft: MathCommunityPuzzleDraft | null;
+}) => {
+  const isDraft = puzzleDraft !== null;
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [puzzleFields, setPuzzleFields] = useState<
     Pick<MathPuzzle, "title" | "difficulty" | "category">
   >({
-    title: "",
-    difficulty: "Easy",
-    category: "Algebra",
+    title: isDraft ? puzzleDraft.title : "",
+    difficulty: isDraft ? puzzleDraft.difficulty : "Easy",
+    category: isDraft ? puzzleDraft.category : "Algebra",
   });
-  const [answers, setAnswers] = useState<string[]>([""]);
-  const [problemText, setProblemText] = useState("");
-  const [hint, setHint] = useState("");
-  const [solutionOutline, setSolutionOutline] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { data: session } = authClient.useSession();
-  if (session == null) return;
+  const convertNormal = (text: string) => {
+    return text.replace("\\\\", "\\");
+  };
+  const [answers, setAnswers] = useState<string[]>(
+    isDraft ? puzzleDraft.answers : [""]
+  );
+  const [problemText, setProblemText] = useState(
+    isDraft ? convertNormal(puzzleDraft.problemText) : ""
+  );
+  const [hint, setHint] = useState(
+    isDraft ? convertNormal(puzzleDraft.hint) : ""
+  );
+  const [solutionOutline, setSolutionOutline] = useState(
+    isDraft ? convertNormal(puzzleDraft.solutionOutline) : ""
+  );
 
   const convertBackslashes = (text: string) => {
     return text.replace("\\", "\\\\");
@@ -62,7 +81,7 @@ const CreatePuzzleForm = () => {
     problemText: convertBackslashes(problemText),
     hint: convertBackslashes(hint),
     solutionOutline: convertBackslashes(solutionOutline),
-    user: session.user.id,
+    user,
   };
 
   const handlePublishNewPuzzle = async () => {
@@ -82,12 +101,16 @@ const CreatePuzzleForm = () => {
         .string()
         .trim()
         .min(1, "Solution outline must be at least one character."),
-      user: z.string(),
+      user: z.object({
+        id: z.string(),
+        name: z.string(),
+        image: z.string().nullish(),
+      }),
     });
     const valid = validatePuzzle.safeParse(newPuzzle);
     if (!valid.success) return toast.error(valid.error.issues[0].message);
     setLoading(true);
-    const response = await publishCommunityMathPuzzleAction(newPuzzle);
+    const response = await publishCommunityMathPuzzleAction(newPuzzle, draftId);
     if (response.success) {
       toast.success(response.message);
       reset();
@@ -100,7 +123,7 @@ const CreatePuzzleForm = () => {
 
   const handleCreateSaveDraft = async () => {
     setLoading(true);
-    const response = await createSavePuzzleDraftAction(newPuzzle);
+    const response = await createSavePuzzleDraftAction(newPuzzle, draftId);
     if (response.success) {
       toast.success(response.message);
       router.push("/user/profile");

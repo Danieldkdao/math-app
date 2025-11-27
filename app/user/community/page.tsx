@@ -1,49 +1,22 @@
 import { connectDB } from "@/db/db";
+import communityPuzzleModel from "@/db/schemas/community-puzzle-model";
 import threadModel from "@/db/schemas/thread-model";
-import type { Thread } from "@/lib/types";
+import type { MathCommunityPuzzle, Thread } from "@/lib/types";
 import { timeAgo } from "@/lib/utils";
 import Link from "next/link";
-import { FaComments, FaLightbulb, FaRobot } from "react-icons/fa";
+import { FaCheckCircle, FaComments, FaLightbulb, FaRobot, FaStar } from "react-icons/fa";
 import { FaArrowRightLong, FaFireFlameCurved } from "react-icons/fa6";
-
-const cards = [
-  {
-    title: "Daily Challenge",
-    description: "A fresh community puzzle every day to keep your mind sharp.",
-    badge: "New",
-    color: "from-cyan-500 to-blue-600",
-  },
-  {
-    title: "Rising Creators",
-    description: "Top puzzle authors this week based on solves and votes.",
-    badge: "Trending",
-    color: "from-orange-400 to-rose-500",
-  },
-  {
-    title: "Deep Dives",
-    description: "Long-form walkthroughs and strategies from the community.",
-    badge: "Editor's pick",
-    color: "from-purple-500 to-indigo-600",
-  },
-];
-
-const threadsPreview = [
-  {
-    title: "Geometric proof for the tiling parity puzzle",
-    status: "Active",
-    meta: "42 replies · 12m ago",
-  },
-  {
-    title: "Sharing hints for the latest daily challenge",
-    status: "Active",
-    meta: "57 replies · 1h ago",
-  },
-];
 
 const CommunityPage = async () => {
   await connectDB();
-  const threadData = await threadModel.find().sort({ createdAt: -1, _id: -1 }).limit(3);
+  const [threadData, puzzleData] = await Promise.all([
+    threadModel.find().sort({ createdAt: -1, _id: -1 }).limit(3),
+    communityPuzzleModel.find().sort({ createdAt: -1, _id: -1 }).limit(3),
+  ]);
   const latestThreads: Thread[] = threadData.map((item) =>
+    JSON.parse(JSON.stringify(item))
+  );
+  const latestPuzzles: MathCommunityPuzzle[] = puzzleData.map((item) =>
     JSON.parse(JSON.stringify(item))
   );
   return (
@@ -102,7 +75,7 @@ const CommunityPage = async () => {
                   Community Puzzles
                 </p>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Curated feeds for builders and solvers
+                  Latest from the community
                 </h2>
               </div>
               <Link
@@ -113,32 +86,75 @@ const CommunityPage = async () => {
               </Link>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              {cards.map((card, index) => (
-                <div
-                  key={index}
-                  className="group overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div
-                    className={`h-1 w-full bg-gradient-to-r ${card.color}`}
-                  />
-                  <div className="space-y-3 p-4">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-gray-700 shadow-sm ring-1 ring-gray-100">
-                      {card.badge}
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {card.title}
-                    </h3>
-                    <p className="text-sm text-gray-600">{card.description}</p>
+              {latestPuzzles.length > 0 ? (
+                latestPuzzles.map((puzzle) => {
+                  const totalRatings = puzzle.ratings.length;
+                  const averageRating = totalRatings
+                    ? (
+                        puzzle.ratings.reduce(
+                          (sum, entry) => sum + entry.rating,
+                          0
+                        ) / totalRatings
+                      ).toFixed(1)
+                    : "-";
+                  return (
                     <Link
-                      href="/user/community/puzzles"
-                      className="flex items-center gap-2 text-sm font-semibold text-cyan-700"
+                      key={puzzle._id}
+                      href={`/user/community/puzzles/${puzzle._id}`}
+                      className="group flex h-full flex-col rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
                     >
-                      Explore feed
-                      <FaArrowRightLong />
+                      <div className="flex items-center justify-between text-xs font-semibold text-gray-800">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 ring-1 ring-gray-200">
+                          {puzzle.category}
+                        </span>
+                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700 ring-1 ring-emerald-100">
+                          {puzzle.difficulty}
+                        </span>
+                      </div>
+                      <div className="mt-3 space-y-2">
+                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                          {puzzle.title}
+                        </h3>
+                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">
+                          {puzzle.problemText}
+                        </p>
+                      </div>
+                      <div className="mt-4 space-y-2 text-xs font-semibold text-gray-700">
+                        <div className="flex items-center justify-between">
+                          <span className="inline-flex items-center gap-2">
+                            <FaCheckCircle className="text-emerald-600" />
+                            {puzzle.attempts.filter(item => item.result === "correct").length} / {puzzle.attempts.length} correct
+                          </span>
+                          <span className="text-[11px] text-gray-500">
+                            {timeAgo(puzzle.createdAt)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FaStar className="text-amber-500" />
+                          {averageRating} avg / {totalRatings} rating{totalRatings === 1 ? "" : "s"}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="inline-flex items-center gap-2">
+                            <FaComments className="text-cyan-600" />
+                            {puzzle.comments.length} comments
+                          </span>
+                          <span className="text-[11px] font-semibold text-gray-800">
+                            By {puzzle.user.name}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
+                        View puzzle
+                        <FaArrowRightLong className="transition group-hover:translate-x-0.5" />
+                      </div>
                     </Link>
-                  </div>
+                  );
+                })
+              ) : (
+                <div className="col-span-3 rounded-xl border border-dashed border-cyan-200 bg-cyan-50/60 p-4 text-sm font-semibold text-cyan-800">
+                  No community puzzles yet. Be the first to publish one!
                 </div>
-              ))}
+              )}
             </div>
             <div className="rounded-xl border border-dashed border-cyan-200 bg-cyan-50/50 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="space-y-1">
@@ -187,9 +203,7 @@ const CommunityPage = async () => {
                         Active
                       </span>
                     </div>
-                    <p className="text-xs text-gray-600">{`${
-                      thread.replies.length
-                    } replies · ${
+                    <p className="text-xs text-gray-600">{`${thread.replies.length} replies / ${
                       thread.replies.length > 0
                         ? timeAgo(
                             thread.replies[thread.replies.length - 1].createdAt

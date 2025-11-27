@@ -7,6 +7,7 @@ import { ModalContextProvider } from "@/hooks/useModal";
 import { TrainContextProvider } from "@/hooks/useTrain";
 import { AIChatContextProvider } from "@/hooks/useAIChat";
 import { ThreadContextProvider } from "@/hooks/useThreads";
+import { PuzzleContextProvider } from "@/hooks/usePuzzle";
 
 export const metadata: Metadata = {
   title: "Math App",
@@ -22,26 +23,28 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <main className="flex flex-col items-center justify-center w-full">
-          <ThreadContextProvider>
-            <AIChatContextProvider>
-              <ModalContextProvider>
-                <TrainContextProvider>
-                  <AppContextProvider>
-                    {children}
-                    <Toaster
-                      position="top-center"
-                      toastOptions={{
-                        className: "z-[10000]",
-                        style: {
-                          zIndex: 10000,
-                        },
-                      }}
-                    />
-                  </AppContextProvider>
-                </TrainContextProvider>
-              </ModalContextProvider>
-            </AIChatContextProvider>
-          </ThreadContextProvider>
+          <PuzzleContextProvider>
+            <ThreadContextProvider>
+              <AIChatContextProvider>
+                <ModalContextProvider>
+                  <TrainContextProvider>
+                    <AppContextProvider>
+                      {children}
+                      <Toaster
+                        position="top-center"
+                        toastOptions={{
+                          className: "z-[10000]",
+                          style: {
+                            zIndex: 10000,
+                          },
+                        }}
+                      />
+                    </AppContextProvider>
+                  </TrainContextProvider>
+                </ModalContextProvider>
+              </AIChatContextProvider>
+            </ThreadContextProvider>
+          </PuzzleContextProvider>
         </main>
       </body>
     </html>

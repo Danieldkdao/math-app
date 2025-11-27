@@ -3,7 +3,7 @@
 import useClickOutside from "@/hooks/useClickOutside";
 import { authClient } from "@/lib/auth/auth-client";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   FaCalculator,
   FaCircleUser,
@@ -11,10 +11,13 @@ import {
   FaGear,
   FaRightToBracket,
 } from "react-icons/fa6";
+import Image from 'next/image';
+import { useRouter } from "next/navigation";
 
 const UserProfile = () => {
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const { data: session } = authClient.useSession();
+  const router = useRouter();
 
   const divRef = useRef(null);
 
@@ -27,7 +30,7 @@ const UserProfile = () => {
       className="relative cursor-pointer"
     >
       {session?.user.image ? (
-        <img
+        <Image
           src={session.user.image}
           alt="User profile image"
           className="rounded-full"
@@ -60,6 +63,7 @@ const UserProfile = () => {
           onClick={() => {
             if(!confirm("Are you sure you want to logout?")) return;
             authClient.signOut();
+            router.push("/");
           }}
           className="flex items-center gap-2 cursor-pointer"
         >

@@ -6,7 +6,12 @@ import {
   MathPuzzleCategory,
   MathPuzzleDifficultyLevel,
   PuzzleSessionServer,
+  type Attempt,
+  type Author,
+  type Flag,
   type MathCommunityPuzzleDraft,
+  type Rating,
+  type RatingNum,
   type Thread,
   type ThreadCategories,
   type ThreadReply,
@@ -208,10 +213,18 @@ export const postThreadReplyAction = async (
 };
 
 export const createSavePuzzleDraftAction = async (
-  puzzleDraft: Omit<MathCommunityPuzzleDraft, "_id" | "createdAt" | "updatedAt">
+  puzzleDraft: Omit<
+    MathCommunityPuzzleDraft,
+    "_id" | "createdAt" | "updatedAt"
+  >,
+  draftId: string | null
 ) => {
   try {
-    await puzzleDraftModel.create(puzzleDraft);
+    if (draftId) {
+      await puzzleDraftModel.findByIdAndUpdate(draftId, puzzleDraft);
+    } else {
+      await puzzleDraftModel.create(puzzleDraft);
+    }
     return { success: true, message: "Puzzle draft saved successfully!" };
   } catch (error) {
     console.error(error);
@@ -220,13 +233,146 @@ export const createSavePuzzleDraftAction = async (
 };
 
 export const publishCommunityMathPuzzleAction = async (
-  puzzleDraft: Omit<MathCommunityPuzzleDraft, "_id" | "createdAt" | "updatedAt">
+  puzzleDraft: Omit<
+    MathCommunityPuzzleDraft,
+    "_id" | "createdAt" | "updatedAt"
+  >,
+  draftId: string | null
 ) => {
   try {
     await communityPuzzleModel.create(puzzleDraft);
+    if (draftId) {
+      await puzzleDraftModel.findByIdAndDelete(draftId);
+    }
     return { success: true, message: "Puzzle published successfully!" };
   } catch (error) {
     console.error(error);
     return { success: false, message: "Failed to publish puzzle." };
+  }
+};
+
+export const postCommentPuzzleAction = async (
+  puzzleId: string,
+  comment: string,
+  user: Author
+) => {
+  try {
+    const newComment: Omit<ThreadReply, "createdAt" | "_id"> = {
+      author: user,
+      content: comment,
+    };
+    const response = await communityPuzzleModel.findByIdAndUpdate(puzzleId, {
+      $push: { comments: newComment },
+    });
+    if (!response) throw new Error("Couldn't find puzzle.");
+    return { success: true, message: "Comment posted successfully!" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Failed to post comment." };
+  }
+};
+
+export const saveUpdateRatingAction = async (
+  puzzleId: string,
+  rating: RatingNum,
+  hasRated: boolean
+) => {
+  try {
+    const h = await headers();
+    const session = await auth.api.getSession({ headers: h });
+    if (session == null)
+      return {
+        success: false,
+        message: "You must be signed in to rate puzzles.",
+      };
+    let response;
+    if (hasRated) {
+      response = await communityPuzzleModel.findByIdAndUpdate(
+        puzzleId,
+        { $set: { "ratings.$[item].rating": rating } },
+        { arrayFilters: [{ "item.user": session.user.id }] }
+      );
+    } else {
+      const newRating: Rating = {
+        user: session.user.id,
+        rating,
+      };
+      response = await communityPuzzleModel.findByIdAndUpdate(puzzleId, {
+        $push: { ratings: newRating },
+      });
+    }
+    if (!response) throw new Error("Couldn't find puzzle.");
+    return { success: true, message: "Rating saved successfully!" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Failed to save rating." };
+  }
+};
+
+export const saveUpdateFlagAction = async (
+  puzzleId: string,
+  hasFlagged: boolean,
+  reason: string
+) => {
+  try {
+    const h = await headers();
+    const session = await auth.api.getSession({ headers: h });
+    if (session == null)
+      return {
+        success: false,
+        message: "You must be signed in to flag puzzles.",
+      };
+    let response;
+    if (hasFlagged) {
+      response = await communityPuzzleModel.findByIdAndUpdate(
+        puzzleId,
+        {
+          $set: { "flags.$[item].reason": reason },
+        },
+        { arrayFilters: [{ "item.user": session.user.id }] }
+      );
+    } else {
+      const newFlag: Flag = {
+        user: session.user.id,
+        reason,
+      };
+      response = await communityPuzzleModel.findByIdAndUpdate(puzzleId, {
+        $push: { flags: newFlag },
+      });
+    }
+    if (!response) throw new Error("No puzzle found.");
+    return { success: true, message: "Puzzle flagged successfully." };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Failed to flag puzzle." };
+  }
+};
+
+export const attemptCommunityPuzzleAction = async (
+  puzzleId: string,
+  result: "correct" | "incorrect",
+  userAnswer: string
+) => {
+  try {
+    const h = await headers();
+    const session = await auth.api.getSession({ headers: h });
+    if (session == null)
+      return {
+        success: false,
+        message: "You must be signed in to attempt this puzzle.",
+      };
+    const newAttempt: Attempt = {
+      user: session.user.id,
+      result,
+      answer: userAnswer,
+    };
+    const response = await communityPuzzleModel.findByIdAndUpdate(puzzleId, {
+      $push: { attempts: newAttempt },
+    });
+    if(!response) throw new Error("Puzzle not found.");
+    return { success: true, message: "Puzzle attempted succesfully!" };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Failed to check your answer." };
   }
 };

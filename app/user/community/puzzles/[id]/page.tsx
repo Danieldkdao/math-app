@@ -1,299 +1,252 @@
+import Link from "next/link";
 import MarkdownRenderer from "@/components/General/markdown-renderer";
 import {
   FaArrowLeft,
   FaCheckCircle,
-  FaQuestionCircle,
-  FaClock,
-  FaForward,
+  FaComments,
+  FaExclamationTriangle,
+  FaFlag,
   FaStar,
 } from "react-icons/fa";
-import {
-  FaChevronRight,
-  FaFlagCheckered,
-  FaLayerGroup,
-  FaUsers,
-} from "react-icons/fa6";
+import { FaLayerGroup, FaUser } from "react-icons/fa6";
+import { connectDB } from "@/db/db";
+import mongoose from "mongoose";
+import communityPuzzleModel from "@/db/schemas/community-puzzle-model";
+import type { MathCommunityPuzzle } from "@/lib/types";
+import Image from "next/image";
+import { timeAgo } from "@/lib/utils";
+import PostComment from "@/components/Dashboard/community/puzzles/post-comment";
+import RatePuzzle from "@/components/Dashboard/community/puzzles/rate-puzzle";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth/auth";
+import Flag from "@/components/Dashboard/community/puzzles/flag";
+import Attempt from "@/components/Dashboard/community/puzzles/attempt";
 
-const puzzlePreview = {
-  title: "Balancing a Tilted Grid",
-  category: "Community Spotlight",
-  difficulty: "Advanced",
-  tags: ["Geometry", "Optimization", "Proof"],
-  time: "18-24 min",
-  solves: "846 attempts",
-  rating: "4.8",
-  author: "Avery L.",
-  problemText:
-    "On a tilted infinite grid, every lattice point carries a weight proportional to its distance from the line y = x. Show that there exists a unique straight path starting at the origin whose cumulative weight stays under 1 for the first 12 steps, and characterize the step where it first exceeds 1.",
-  hint: "Look for symmetry when reflecting across y = x and normalize the step lengths to compare partial sums.",
-  solutionOutline:
-    "Establish a bound on the partial sums using mirrored steps; prove monotonicity of the deviation; identify the tipping step by solving for when the cumulative series crosses 1.",
-};
-
-const detailPills = [
-  { label: "Live attempts", value: "42 solvers", tone: "emerald" },
-  { label: "Recommended path", value: "Try hints before reveal", tone: "cyan" },
-  { label: "Streak safe", value: "No penalties on first try", tone: "amber" },
-];
-
-const CommunityPuzzleDetailPage = () => {
+const CommunityPuzzleDetailPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const h = await headers();
+  const session = await auth.api.getSession({ headers: h });
+  if (session == null) return;
+  const { id } = await params;
+  await connectDB();
+  const validIdChecker = mongoose.Types.ObjectId;
+  if (!validIdChecker.isValid(id))
+    return (
+      <div className="w-full flex justify-center px-4 py-10">
+        <div className="w-full max-w-3xl rounded-3xl border border-gray-200 bg-white p-8 shadow-sm space-y-4 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-600 ring-1 ring-rose-100">
+            <FaExclamationTriangle className="h-6 w-6" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-gray-900">
+              Puzzle not found
+            </h1>
+            <p className="text-sm text-gray-700 max-w-2xl mx-auto">
+              The puzzle you’re looking for doesn’t exist or the link is broken.
+              Check the URL or return to the community puzzles to browse active
+              challenges.
+            </p>
+          </div>
+          <Link
+            href="/user/community/puzzles"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-cyan-700"
+          >
+            <FaArrowLeft />
+            Back to community puzzles
+          </Link>
+        </div>
+      </div>
+    );
+  const puzzleData = await communityPuzzleModel.findById(id);
+  if (!puzzleData)
+    return (
+      <div className="w-full flex justify-center px-4 py-10">
+        <div className="w-full max-w-3xl rounded-3xl border border-gray-200 bg-white p-8 shadow-sm space-y-4 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-600 ring-1 ring-rose-100">
+            <FaExclamationTriangle className="h-6 w-6" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-gray-900">
+              Puzzle not found
+            </h1>
+            <p className="text-sm text-gray-700 max-w-2xl mx-auto">
+              The puzzle you’re looking for doesn’t exist or our database is
+              down. Check the URL or return to the community puzzles to browse
+              active challenges.
+            </p>
+          </div>
+          <Link
+            href="/user/community/puzzles"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-cyan-700"
+          >
+            <FaArrowLeft />
+            Back to community puzzles
+          </Link>
+        </div>
+      </div>
+    );
+  const puzzle: MathCommunityPuzzle = JSON.parse(JSON.stringify(puzzleData));
+  const rating =
+    puzzle.ratings.find((item) => item.user === session.user.id) || null;
+  const flag =
+    puzzle.flags.find((item) => item.user === session.user.id) || null;
+  const attempt =
+    puzzle.attempts.find((item) => item.user === session.user.id) || null;
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-5xl space-y-8 px-4 py-8">
         <header className="space-y-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-3 text-sm font-semibold text-gray-700">
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200"
-              >
-                <FaArrowLeft />
-                Back to puzzles
-              </button>
-              <span className="inline-flex items-center gap-2 rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 ring-1 ring-cyan-100">
-                <FaLayerGroup className="text-cyan-600" />
-                Community puzzle
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <Link
+              href="/user/community/puzzles"
+              className="inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200 hover:bg-gray-100"
+            >
+              <FaArrowLeft />
+              Back to puzzles
+            </Link>
+            <span className="inline-flex items-center gap-2 rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 ring-1 ring-cyan-100">
+              <FaLayerGroup className="text-cyan-600" />
+              Community puzzle
+            </span>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-gray-900">
+              <MarkdownRenderer text={puzzle.title} />
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-700">
+              <span className="rounded-full bg-gray-50 px-3 py-1 font-semibold ring-1 ring-gray-200">
+                By {puzzle.user.name}
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                <FaFlagCheckered />
-                Streak protected
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700 ring-1 ring-emerald-100">
+                {puzzle.difficulty}
               </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {detailPills.map((pill) => (
-                <span
-                  key={pill.label}
-                  className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-gray-800 ring-1 ring-gray-200 ${
-                    pill.tone === "emerald"
-                      ? "bg-emerald-50"
-                      : pill.tone === "amber"
-                      ? "bg-amber-50"
-                      : "bg-cyan-50"
-                  }`}
-                >
-                  {pill.value}
-                </span>
-              ))}
+              <span className="rounded-full bg-cyan-50 px-3 py-1 text-cyan-700 ring-1 ring-cyan-100">
+                {puzzle.category}
+              </span>
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-[1fr,0.7fr] lg:grid-cols-[1.1fr,0.9fr]">
-            <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm">
-              <div className="space-y-1">
-                <p className="text-xs font-semibold text-gray-600">
-                  Progress toward solve
-                </p>
-                <div className="flex items-center gap-3">
-                  <progress className="h-2 w-44 rounded-full" value={0.35} />
-                  <span className="text-sm font-semibold text-gray-800">
-                    35% trail scouted
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 justify-end">
-              <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm">
-                <FaClock className="text-gray-500" />
-                Focus timer
-                <span className="rounded-md bg-gray-50 px-2 py-1 text-xs text-gray-700">
-                  18:42
-                </span>
-              </div>
-              <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm">
-                <FaQuestionCircle className="text-cyan-600" />
-                Hints ready
-              </div>
-            </div>
+          <div className="flex flex-wrap gap-3 text-sm font-semibold text-gray-800">
+            <span className="inline-flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200">
+              <FaStar className="text-amber-500" />
+              {(puzzle.ratings.reduce((a, b) => a + b.rating, 0) /
+                (puzzle.ratings.length || 1)).toFixed(1)}{" "}
+              avg {puzzle.ratings.length} ratings
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200">
+              <FaComments className="text-cyan-600" />
+              {puzzle.comments.length} comments
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200">
+              <FaCheckCircle className="text-emerald-600" />
+              {
+                puzzle.attempts.filter((item) => item.result === "correct")
+                  .length
+              }{" "}
+              / {puzzle.attempts.length} correct
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 ring-1 ring-gray-200">
+              <FaFlag className="text-amber-600" />
+              {puzzle.flags.length} flags
+            </span>
           </div>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
-          <div className="space-y-5">
-            <article className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-md bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 ring-1 ring-cyan-100">
-                  {puzzlePreview.category}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                  {puzzlePreview.difficulty}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-md bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">
-                  {puzzlePreview.time}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-md bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">
-                  <FaUsers className="text-cyan-600" />
-                  {puzzlePreview.solves}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-md bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">
-                  <FaStar className="text-amber-500" />
-                  {puzzlePreview.rating}
-                </span>
-              </div>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold text-gray-900 leading-tight">
-                  <MarkdownRenderer text={puzzlePreview.title} />
-                </div>
-                <div className="text-sm font-semibold text-gray-600">
-                  Authored by {puzzlePreview.author} • Geometry lab series
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="text-lg font-medium text-gray-700 leading-relaxed">
-                  <MarkdownRenderer text={puzzlePreview.problemText} />
-                </div>
-                <div className="flex flex-wrap gap-2 text-xs font-semibold text-gray-600">
-                  {puzzlePreview.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-gray-50 px-3 py-1 ring-1 ring-gray-200"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="rounded-2xl bg-yellow-50 px-4 py-3 text-sm text-gray-800 ring-1 ring-yellow-100">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="inline-flex items-center gap-2 font-semibold text-yellow-800">
-                    <FaQuestionCircle className="text-yellow-600" />
-                    Hint available
-                  </div>
-                  <span className="rounded-md bg-white px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-yellow-100">
-                    Tap to reveal when ready
-                  </span>
-                </div>
-                <div className="mt-2 text-gray-700">
-                  <MarkdownRenderer text={puzzlePreview.hint} />
-                </div>
-              </div>
-              <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800">
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex items-center gap-2 font-semibold text-gray-900">
-                    <FaForward className="text-cyan-600" />
-                    Solution outline
-                  </div>
-                  <FaChevronRight className="text-gray-500" />
-                </div>
-                <div className="mt-2 text-gray-700">
-                  <MarkdownRenderer text={puzzlePreview.solutionOutline} />
-                </div>
-              </div>
-            </article>
-
-            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    Your attempt
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    Mirror the train experience: record an answer, request
-                    hints, and reveal the outline when you are done.
-                  </p>
-                </div>
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                  No penalties for first reveal
-                </span>
-              </div>
-              <div className="grid gap-4 md:grid-cols-[0.65fr,0.35fr]">
-                <label className="space-y-2 text-sm font-semibold text-gray-800">
-                  Submit an answer
-                  <input
-                    type="number"
-                    placeholder="Enter a numeric answer"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-base text-gray-800 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
-                  />
-                </label>
-                <label className="space-y-2 text-sm font-semibold text-gray-800">
-                  Notes or approach
-                  <textarea
-                    rows={3}
-                    placeholder="Optional: jot down your path to the answer"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
-                  />
-                </label>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-cyan-600 px-5 py-3 text-sm font-semibold text-white shadow transition hover:bg-cyan-700"
-                >
-                  <FaCheckCircle />
-                  Check answer
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-sm"
-                >
-                  <FaQuestionCircle />
-                  Ask for a hint
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-sm"
-                >
-                  <FaForward />
-                  Reveal outline
-                </button>
+          <article className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="space-y-3">
+              <div className="text-lg font-semibold text-gray-900">Problem</div>
+              <div className="text-base text-gray-800 leading-relaxed">
+                <MarkdownRenderer text={puzzle.problemText} />
               </div>
             </div>
-          </div>
+          </article>
 
           <aside className="space-y-4">
-            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                <FaLayerGroup className="text-cyan-600" />
-                Attempt summary
+            <Attempt
+              puzzleId={puzzle._id}
+              prevAnswer={attempt?.answer}
+              prevResult={attempt?.result}
+              answers={puzzle.answers}
+              hint={puzzle.hint}
+              solutionOutline={puzzle.solutionOutline}
+            />
+
+            <div className="space-y-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-gray-900">
+                  Rate this puzzle
+                </p>
+                <span className="text-xs font-semibold text-gray-600">
+                  {(puzzle.ratings.reduce((a, b) => a + b.rating, 0) /
+                    (puzzle.ratings.length || 1)).toFixed(1)}{" "}
+                  avg {puzzle.ratings.length} ratings
+                </span>
               </div>
-              <div className="grid gap-2 text-sm text-gray-700">
-                <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                  <span className="font-semibold text-gray-800">Status</span>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-                    In progress
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                  <span className="font-semibold text-gray-800">
-                    Time spent
-                  </span>
-                  <span className="text-gray-800 font-semibold">06:18</span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                  <span className="font-semibold text-gray-800">
-                    Hints used
-                  </span>
-                  <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-100">
-                    0 of 2
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3">
-                  <span className="font-semibold text-gray-800">
-                    Best streak
-                  </span>
-                  <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 ring-1 ring-cyan-100">
-                    12 days
-                  </span>
-                </div>
-              </div>
+              <RatePuzzle
+                puzzleId={puzzle._id}
+                hasRated={rating ? true : false}
+                prevRating={rating?.rating}
+              />
+              <p className="text-xs text-gray-600">
+                Ratings are stored with each puzzle so others can gauge clarity
+                and difficulty.
+              </p>
             </div>
 
-            <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm space-y-3">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                <FaClock className="text-gray-500" />
-                Session reminders
+            <div className="space-y-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-gray-900">Comments</p>
+                <span className="rounded-full bg-gray-50 px-3 py-1 text-[11px] font-semibold text-gray-700 ring-1 ring-gray-200">
+                  {puzzle.comments.length} responses
+                </span>
               </div>
-              <ul className="space-y-2 text-sm text-gray-700">
-                <li className="rounded-lg bg-gray-50 px-3 py-2">
-                  Stay close to the train flow: hint first, then outline if
-                  stuck.
-                </li>
-                <li className="rounded-lg bg-gray-50 px-3 py-2">
-                  Add a short note so future solvers can learn from your path.
-                </li>
-                <li className="rounded-lg bg-gray-50 px-3 py-2">
-                  Solution reveal will mark this puzzle as viewed in your feed.
-                </li>
-              </ul>
+              <div className="space-y-3 max-h-72 overflow-auto">
+                {puzzle.comments.reverse().map((comment) => (
+                  <div
+                    key={comment._id}
+                    className="rounded-xl border border-gray-100 bg-gray-50 p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      {comment.author.image ? (
+                        <Image
+                          src={comment.author.image}
+                          alt="Author profile image"
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="flex size-10 items-center justify-center rounded-full bg-gray-900 text-white">
+                          <FaUser />
+                        </div>
+                      )}
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-900">
+                          {comment.author.name}
+                          <span className="text-gray-500">·</span>
+                          <span className="text-xs font-normal text-gray-500">
+                            {timeAgo(comment.createdAt)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700">
+                          {comment.content}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <PostComment puzzleId={puzzle._id} />
             </div>
+
+            <Flag
+              puzzleId={puzzle._id}
+              hasFlagged={flag ? true : false}
+              flagMessage={flag?.reason}
+            />
           </aside>
         </section>
       </div>

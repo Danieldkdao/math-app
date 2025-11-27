@@ -53,7 +53,7 @@ const PreviousConversationClient = ({
   };
 
   const handlePagination = (pageNumber: number) => {
-    if (pageNumber < 1 || pageNumber > numberOfPages) return;
+    if (pageNumber < 1 || pageNumber + 1 > numberOfPages) return;
     setCurrentPage(pageNumber);
   };
 

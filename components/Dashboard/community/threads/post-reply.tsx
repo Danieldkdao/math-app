@@ -12,7 +12,11 @@ const PostReply = ({ threadId }: { threadId: string }) => {
 
   const handlePostReply = async () => {
     setLoading(true);
-    if (!replyContent.trim()) return toast.error("Reply cannot be empty.");
+    if (!replyContent.trim()) {
+      toast.error("Reply cannot be empty.");
+      setLoading(false);
+      return;
+    };
     const response = await postThreadReplyAction(threadId, replyContent);
     if (response.success) {
       setReplyContent("");

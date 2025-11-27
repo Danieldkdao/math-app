@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import Options from "./options";
+import { useEffect, useState } from "react";
 import TrainMain from "./main";
 import { useTrain } from "@/hooks/useTrain";
 import { PuzzleSessionServer } from "@/lib/types";
@@ -10,6 +9,7 @@ import toast from "react-hot-toast";
 import { useModal } from "@/hooks/useModal";
 import SessionDetails from "../user-profile/training-history/session-details";
 import Link from "next/link";
+import SettingsModal from "./settings-modal";
 
 const TrainContainer = ({ name, userId }: { name: string; userId: string }) => {
   const [endSession, setEndSession] = useState(false);
@@ -17,6 +17,11 @@ const TrainContainer = ({ name, userId }: { name: string; userId: string }) => {
     useState<PuzzleSessionServer | null>(null);
   const { userSettings, puzzleHistory } = useTrain();
   const { setIsModalOpen } = useModal();
+
+  useEffect(() => {
+    if(!userSettings)
+    setIsModalOpen(true);
+  }, []);
 
   const endSaveSession = async () => {
     if (!userSettings) return;
@@ -65,10 +70,9 @@ const TrainContainer = ({ name, userId }: { name: string; userId: string }) => {
           </div>
         </div>
       ) : (
-        <div className="space-y-2">
-          <Options />
-          <hr className="text-gray-400 mb-4" />
+        <div>
           <TrainMain endSaveSession={endSaveSession} />
+          <SettingsModal />
         </div>
       )}
     </div>

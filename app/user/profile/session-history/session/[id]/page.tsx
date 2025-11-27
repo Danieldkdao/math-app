@@ -1,4 +1,3 @@
-import PuzzleDetailsModal from "@/components/Dashboard/user-profile/training-history/puzzle-details-modal";
 import PuzzleHistory from "@/components/Dashboard/user-profile/training-history/puzzle-history";
 import SessionDetails from "@/components/Dashboard/user-profile/training-history/session-details";
 import { connectDB } from "@/db/db";

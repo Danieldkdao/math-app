@@ -35,15 +35,17 @@ export type MathPuzzle = {
 };
 
 export type MathCommunityPuzzleDraft = MathPuzzle & {
-  user: string;
+  user: Author;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export type Rating = {
   user: string;
-  rating: 1 | 2 | 3 | 4 | 5;
+  rating: RatingNum
 }
+
+export type RatingNum = 1 | 2 | 3 | 4 | 5;
 
 export type Flag = {
   user: string;
@@ -51,13 +53,18 @@ export type Flag = {
 }
 
 export type MathCommunityPuzzle = MathPuzzle & {
-  user: string;
+  user: Author;
   createdAt: Date;
   ratings: Rating[];
   flags: Flag[];
   comments: ThreadReply[];
-  attempts: string[];
-  correctAttempts: string[];
+  attempts: Attempt[];
+}
+
+export type Attempt = {
+  user: string;
+  answer: string;
+  result: "correct" | "incorrect";
 }
 
 export type UserSettings = {

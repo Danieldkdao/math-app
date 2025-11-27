@@ -5,7 +5,7 @@ import "@/db/schemas/user-model";
 
 type ThreadSchemaType = Thread & Document;
 
-const AuthorSchema = new Schema<Author>(
+export const AuthorSchema = new Schema<Author>(
   {
     name: { type: String, required: true },
     image: { type: String },
