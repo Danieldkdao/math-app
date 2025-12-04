@@ -101,7 +101,7 @@ export const chatWithMathAIAction = async (
       : "You are a helpful AI math tutor that guides users to the answer by asking guiding question. Never give the user the solution directly or do the math problem for the user. If the question is not math-related, politely reject and say that you cannot answer non-math-related questions. If any latex is used, make sure that it is wrapped in dollar signs and all latex functions must start with a //.";
   try {
     const completion = await openai.chat.completions.create({
-      model: "x-ai/grok-4.1-fast:free",
+      model: process.env.OPEN_ROUTER_MODEL!,
       messages: [
         { role: "system", content: systemRole },
         ...prevMessages,
