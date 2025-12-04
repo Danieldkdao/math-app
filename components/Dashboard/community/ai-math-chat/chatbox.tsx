@@ -18,6 +18,8 @@ import { FaHistory } from "react-icons/fa";
 import { useModal } from "@/hooks/useModal";
 import { KeyboardEvent } from "react";
 import { useAIChat } from "@/hooks/useAIChat";
+import { authClient } from "@/lib/auth/auth-client";
+import Image from "next/image";
 
 const suggestedPrompts = [
   "Generate a gentle hint for a geometry proof without revealing the angle chase.",
@@ -39,6 +41,13 @@ const Chatbox = () => {
     "assistant"
   );
   const { setIsModalOpen } = useModal();
+  const {data: session} = authClient.useSession();
+
+  if (session == null) {
+    redirect("/");
+    toast.error("You must be signed in to chat with AI.");
+    return;
+  }
 
   const sendChat = async () => {
     if (!prompt.trim().length)
@@ -180,11 +189,16 @@ const Chatbox = () => {
                     <MarkdownRenderer text={message.content} />
                   </div>
                 )}
-                {message.role === "user" && (
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-900 text-white shadow-sm">
+                {message.role === "user" ? session.user.image ? (
+                  <div className="flex-shrink-0">
+                    <Image src={session.user.image} alt="User profile image" width={9} height={9}/>
+                  </div>
+                  
+                ) : (
+                  <div className="flex size-9 items-center justify-center rounded-full bg-gray-900 text-white shadow-sm">
                     <FaUser />
                   </div>
-                )}
+                ) : <></>}
               </div>
             ))
           )}
