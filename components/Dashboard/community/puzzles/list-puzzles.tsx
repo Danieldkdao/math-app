@@ -116,7 +116,7 @@ const ListPuzzles = ({ puzzles }: { puzzles: MathCommunityPuzzle[] }) => {
                     <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-gray-200">
                       <FaUserFriends className="text-cyan-600" />
                       {puzzle.attempts.length} attempts,{" "}
-                      {puzzle.correctAttempts.length} correct
+                      {puzzle.attempts.filter(item => item.result === "correct").length} correct
                     </div>
                     <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-gray-200">
                       <FaStar className="text-amber-500" />
