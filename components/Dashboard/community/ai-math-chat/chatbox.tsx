@@ -191,7 +191,7 @@ const Chatbox = () => {
                 )}
                 {message.role === "user" ? session.user.image ? (
                   <div className="flex-shrink-0">
-                    <Image src={session.user.image} alt="User profile image" width={9} height={9}/>
+                    <Image src={session.user.image} alt="User profile image" width={35} height={35} className="rounded-full"/>
                   </div>
                   
                 ) : (
