@@ -14,7 +14,7 @@ const SessionHistoryPage = async () => {
   const data = await puzzleSessionModel.find({ user: session.user.id });
   if (data.length === 0)
     return (
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center px-4">
         <div className="w-full max-w-[800px] bg-gray-100 rounded-md border border-gray-400 p-5 flex flex-col items-center gap-4">
           <h1 className="text-2xl font-bold text-center">
             No Sessions Completed Yet
@@ -43,11 +43,11 @@ const SessionHistoryPage = async () => {
     JSON.parse(JSON.stringify(item))
   );
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center px-4">
       <div className="w-full max-w-[800px] bg-gray-100 rounded-md border border-gray-400 p-5 space-y-4">
         <h1 className="text-2xl font-bold">SESSION HISTORY</h1>
         <hr className="text-gray-400" />
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {puzzleSessionHistory.map((item) => {
             return <SessionCard key={item._id} puzzleSession={item} />;
           })}

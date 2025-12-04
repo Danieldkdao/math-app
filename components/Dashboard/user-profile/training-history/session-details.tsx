@@ -208,7 +208,7 @@ const SessionDetails = ({
       <hr className="text-gray-400" />
       <h1 className="text-xl font-bold">PERFORMANCE BREAKDOWN</h1>
       <hr className="text-gray-400" />
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
         <div className="md:flex-1 border rounded-md border-gray-400 p-4 space-y-2">
           <h1 className="font-medium text-gray-600">PUZZLE RESULTS</h1>
           <div>
@@ -218,7 +218,7 @@ const SessionDetails = ({
               return (
                 <div key={index}>
                   {split && <hr className="text-gray-400 mt-2" />}
-                  <div className={`flex ${split && "mt-2"}`}>
+                  <div className={`flex flex-wrap gap-2 ${split && "mt-2"}`}>
                     <h1 className="flex-2 text-gray-500">{item.title}:</h1>
                     <h1 className="flex-1 font-bold text-gray-500">
                       {item.value}
@@ -237,7 +237,7 @@ const SessionDetails = ({
               return (
                 <div key={index}>
                   {split && <hr className="text-gray-400 mt-2" />}
-                  <div className={`flex ${split && "mt-2"}`}>
+                  <div className={`flex flex-wrap gap-2 ${split && "mt-2"}`}>
                     <h1 className="flex-2 text-gray-500">{item.title}:</h1>
                     <h1 className="flex-1 font-bold text-gray-500">
                       {`${item.value} ${item.unit}`}
@@ -283,14 +283,14 @@ const SessionDetails = ({
             );
           })}
         </div>
-        <div className="w-full max-w-60 mt-4">
+        <div className="w-full max-w-60 mt-4 space-y-2">
           {sessionConfig.map((item, index) => {
             return (
-              <div className="flex" key={index}>
-                <div className="flex-1">
+              <div className="flex flex-wrap gap-2" key={index}>
+                <div className="flex-1 min-w-[140px]">
                   <h1 className="text-gray-500">{item.title}:</h1>
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-[140px]">
                   <h1 className="text-gray-500 font-bold">{item.value}</h1>
                 </div>
               </div>

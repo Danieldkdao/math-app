@@ -21,9 +21,9 @@ const UserThreadsPage = async () => {
     .sort({ createdAt: -1, _id: -1 });
   const threads = data.map((item) => JSON.parse(JSON.stringify(item)));
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center px-4">
       <div className="w-full max-w-[900px] bg-gray-50 rounded-md border border-gray-400 p-6 space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/user/profile">
             <div className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition">
               <FaArrowLeft />

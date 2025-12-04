@@ -86,7 +86,7 @@ const SettingsModal = () => {
 
   return (
     <Modal callback={() => redirect("/user/dashboard")}>
-      <div className="bg-white w-full max-w-[500px] rounded-md p-5 space-y-2">
+      <div className="bg-white w-full max-w-[500px] max-h-[80vh] overflow-y-auto rounded-md p-5 space-y-2">
         <h1 className="text-xl font-semibold">Settings</h1>
         <hr className="text-gray-400" />
         <div className="space-y-2">
@@ -110,7 +110,7 @@ const SettingsModal = () => {
                       setSelectedCategories((prev) => [...prev, item]);
                     }
                   }}
-                  className={`py-1 px-2 rounded-md border text-gray-600 cursor-pointer hover:bg-cyan-50 active:scale-[98%] transition-color duration-100 ease-in-out text-sm ${
+                  className={`py-1 px-2 rounded-md border text-gray-600 cursor-pointer hover:bg-cyan-50 active:scale-[98%] transition-color duration-100 ease-in-out text-xs md:text-sm ${
                     isSelected
                       ? "border-cyan-800 bg-cyan-100"
                       : "border-gray-400 bg-gray-100"
@@ -144,7 +144,7 @@ const SettingsModal = () => {
                       setSelectedDifficultyLevels((prev) => [...prev, item]);
                     }
                   }}
-                  className={`py-1 px-2 rounded-md border text-gray-600 cursor-pointer hover:bg-cyan-50 active:scale-[98%] transition-color duration-100 ease-in-out text-sm ${
+                  className={`py-1 px-2 rounded-md border text-gray-600 cursor-pointer hover:bg-cyan-50 active:scale-[98%] transition-color duration-100 ease-in-out text-xs md:text-sm ${
                     isSelected
                       ? "border-cyan-800 bg-cyan-100"
                       : "border-gray-400 bg-gray-100"
@@ -160,8 +160,8 @@ const SettingsModal = () => {
         <div className="space-y-4">
           <h2 className="text-gray-600 font-medium">Configuration</h2>
           <form onSubmit={handleSubmit(startSession)} className="space-y-2">
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col gap-2">
+            <div className="flex sm:flex-row sm:items-end sm:gap-6">
+              <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="time-limit" className="text-sm text-gray-600">
                   Time Limit per Puzzle:
                 </label>
@@ -177,7 +177,7 @@ const SettingsModal = () => {
                   <p className="text-sm text-gray-600">sec</p>
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="num-puzzles" className="text-sm text-gray-600">
                   Number of Puzzles:
                 </label>
@@ -204,7 +204,7 @@ const SettingsModal = () => {
                 {errors.numberOfPuzzles.message}
               </p>
             )}
-            <div className="flex items-center gap-4">
+            <div className="flex sm:items-center gap-4">
               <div className="flex flex-col gap-2">
                 <label htmlFor="hints" className="text-sm text-gray-600">
                   Allow hints:
@@ -221,7 +221,7 @@ const SettingsModal = () => {
             <hr className="text-gray-400" />
             <button
               disabled={isSubmitting}
-              className={`py-2 px-10 border border-cyan-800 rounded-md bg-cyan-50 hover:bg-cyan-100 transition-colors duration-300 ease-in-out cursor-pointer flex ${
+              className={`py-2 px-10 border border-cyan-800 rounded-md bg-cyan-50 hover:bg-cyan-100 transition-colors duration-300 ease-in-out cursor-pointer flex w-full justify-center ${
                 isSubmitting && "opacity-60"
               }`}
             >

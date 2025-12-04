@@ -169,8 +169,8 @@ const TrainMain = ({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between w-full">
-        <h1 className="text-xl font-medium">Train</h1>
+      <div className="flex flex-row items-center justify-between gap-2 w-full">
+        <h1 className="text-lg sm:text-xl font-medium">Train</h1>
         <button
           onClick={startNewSession}
           className="cursor-pointer p-2 rounded-md hover:bg-gray-200"
@@ -181,7 +181,7 @@ const TrainMain = ({
       <hr className="text-gray-400 mb-4" />
       <div className="space-y-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h2>Progress:</h2>
             <progress className="rounded-md" value={percentComplete} />
             <h2 className="font-bold">
@@ -218,7 +218,7 @@ const TrainMain = ({
           </div>
         </div>
         <div className="border rounded-md border-gray-400 p-4 flex flex-col items-start gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h1 className="bg-cyan-50 py-1 px-2 rounded-md font-medium text-gray-600 text-sm">
               {currentPuzzle.category}
             </h1>

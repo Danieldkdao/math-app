@@ -69,7 +69,7 @@ const CommunityPage = async () => {
         </header>
         <section className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-cyan-700">
                   Community Puzzles
@@ -85,7 +85,7 @@ const CommunityPage = async () => {
                 View all
               </Link>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {latestPuzzles.length > 0 ? (
                 latestPuzzles.map((puzzle) => {
                   const totalRatings = puzzle.ratings.length;
@@ -194,8 +194,8 @@ const CommunityPage = async () => {
                   key={thread._id}
                   href={`/user/community/discussions/thread/${thread._id}`}
                 >
-                  <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm">
-                    <div className="flex items-center justify-between">
+                <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-sm font-semibold text-gray-900">
                         {thread.title}
                       </p>
@@ -224,7 +224,7 @@ const CommunityPage = async () => {
         </section>
         <section className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex flex-col gap-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-emerald-700">
                   AI Chatbot

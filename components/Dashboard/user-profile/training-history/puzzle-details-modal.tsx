@@ -44,9 +44,9 @@ const PuzzleDetailsModal = ({
   return (
     <Modal callback={() => setIsModalOpen(false)}>
       <div className="w-[min(960px,92vw)] max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl border border-gray-200">
-        <div className="relative px-6 pt-6 pb-2">
+        <div className="relative px-4 sm:px-6 pt-6 pb-2">
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-t-2xl" />
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
             <div className="space-y-2">
               <p className="text-[11px] uppercase tracking-[0.18em] text-gray-500">
                 Puzzle recap
@@ -76,7 +76,7 @@ const PuzzleDetailsModal = ({
             </button>
           </div>
         </div>
-        <div className="px-6 pb-6 space-y-5">
+        <div className="px-4 sm:px-6 pb-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
               <p className="text-xs text-gray-500 font-medium">Result</p>

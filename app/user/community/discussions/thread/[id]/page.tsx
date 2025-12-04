@@ -157,7 +157,7 @@ const ThreadPage = async ({ params }: ThreadPageProps) => {
                   className="rounded-xl border border-gray-100 bg-gray-50 p-4"
                 >
                   <div className="flex items-center gap-3">
-                    {reply.author.image ? <Image src={reply.author.image} alt="Author profile image" width={40} height={40} className="rounded-full"/> : <div className="flex size-10 items-center justify-center rounded-full bg-gray-900 text-white">
+                    {reply.author.image ? <Image src={reply.author.image} alt="Author profile image" width={40} height={40} className="rounded-full"/> : <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-900 text-white">
                       <FaUser />
                     </div>}
                     <div className="space-y-1">

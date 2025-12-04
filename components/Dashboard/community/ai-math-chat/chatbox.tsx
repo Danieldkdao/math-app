@@ -135,7 +135,7 @@ const Chatbox = () => {
         </div>
       </header>
       <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
             <FaCommentDots className="text-cyan-600" />
             Conversation
@@ -172,11 +172,11 @@ const Chatbox = () => {
                   </div>
                 )}
                 {message.role === "user" ? (
-                  <div className="max-w-[75%] rounded-2xl px-4 py-3 text-sm bg-white text-gray-900 shadow ring-1 ring-gray-200">
+                  <div className="max-w-full sm:max-w-[75%] rounded-2xl px-4 py-3 text-sm bg-white text-gray-900 shadow ring-1 ring-gray-200">
                     {message.content}
                   </div>
                 ) : (
-                  <div className="max-w-[75%] rounded-2xl px-4 py-3 text-sm bg-cyan-600 text-white shadow">
+                  <div className="max-w-full sm:max-w-[75%] rounded-2xl px-4 py-3 text-sm bg-cyan-600 text-white shadow">
                     <MarkdownRenderer text={message.content} />
                   </div>
                 )}

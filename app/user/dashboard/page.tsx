@@ -59,7 +59,7 @@ const DashboardPage = async () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
 
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-gray-800">
@@ -67,7 +67,7 @@ const DashboardPage = async () => {
           <h2 className="text-xl font-bold">Training preferences</h2>
         </div>
         {latestSession ? (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <div className="rounded-md border border-gray-200 bg-white p-4 shadow-sm space-y-2">
               <p className="text-sm font-semibold text-gray-700">
                 Selected difficulty
@@ -129,7 +129,7 @@ const DashboardPage = async () => {
             </div>
           </div>
         ) : (
-          <div className="py-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
+          <div className="p-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
             <p className=" text-center text-sm font-semibold text-cyan-800">
               No sessions yet. Start a new training session to get started.
             </p>
@@ -142,9 +142,9 @@ const DashboardPage = async () => {
           <FaCubes className="text-cyan-700" />
           <h2 className="text-xl font-bold">Latest session breakdown</h2>
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          {latestSession ? (
-            latestSession.puzzleHistory.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {latestSession ? (
+              latestSession.puzzleHistory.length > 0 ? (
               latestSession.puzzleHistory.reverse().slice(0, 3).map((puzzle) => (
                 <div
                   key={puzzle.puzzleId._id}
@@ -153,7 +153,10 @@ const DashboardPage = async () => {
                   <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
                     <span className="inline-flex items-center gap-2">
                       <FaPuzzlePiece className="text-cyan-700" />
-                      {puzzle.puzzleId.title}
+                      <p className="line-clamp-1">
+                        {puzzle.puzzleId.title}
+                      </p>
+                      
                     </span>
                     <span
                       className={`px-2 py-1 rounded-md text-xs ring-1 ${
@@ -192,7 +195,7 @@ const DashboardPage = async () => {
               </p>
             )
           ) : (
-            <div className="py-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
+            <div className="p-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
               <p className=" text-center text-sm font-semibold text-cyan-800">
                 No sessions yet. Start a new training session to see details.
               </p>
@@ -206,7 +209,7 @@ const DashboardPage = async () => {
           <FaPuzzlePiece className="text-cyan-700" />
           <h2 className="text-xl font-bold">Math puzzle library spotlight</h2>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {mathCommunityPuzzles.length > 0 ? (
             mathCommunityPuzzles.map((puzzle) => (
               <Link
@@ -240,7 +243,7 @@ const DashboardPage = async () => {
               </Link>
             ))
           ) : (
-            <div className="py-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
+            <div className="p-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
               <p className=" text-center text-sm font-semibold text-cyan-800">
                 No community puzzles yet. Publish one to see it here.
               </p>
@@ -254,7 +257,7 @@ const DashboardPage = async () => {
           <FaPenNib className="text-cyan-700" />
           <h2 className="text-xl font-bold">Draft health check</h2>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {draftPuzzles.length > 0 ? (
             draftPuzzles.map((draft) => {
               let fields = 2;
@@ -358,8 +361,8 @@ const DashboardPage = async () => {
               );
             })
           ) : (
-            <div className="py-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
-              <p className=" text-center text-sm font-semibold text-cyan-800">
+            <div className="p-4 col-span-3 bg-cyan-50 rounded-md border border-cyan-800">
+              <p className="text-center text-sm font-semibold text-cyan-800">
                 No draft puzzles yet. Start a draft to track progress here.
               </p>
             </div>

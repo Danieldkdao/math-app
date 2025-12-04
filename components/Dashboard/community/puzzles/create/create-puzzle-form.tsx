@@ -144,7 +144,7 @@ const CreatePuzzleForm = ({
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
               Puzzle details
@@ -217,7 +217,7 @@ const CreatePuzzleForm = ({
         </div>
       </div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
               Problem statement
@@ -236,7 +236,7 @@ const CreatePuzzleForm = ({
         />
       </div>
       <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-semibold text-gray-900">
             Hints and solution sketch
           </h2>
@@ -253,7 +253,7 @@ const CreatePuzzleForm = ({
             <FaPlus />
             Add answer
           </button>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {answers.map((item, index) => (
               <div key={index} className="flex items-center">
                 <input

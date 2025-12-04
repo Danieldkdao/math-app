@@ -171,8 +171,8 @@ const UserProfile = async () => {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-full max-w-[800px] bg-gray-50 rounded-md border border-gray-400 p-5 space-y-4">
-        <div className="flex items-center gap-4">
+      <div className="w-full max-w-[900px] bg-gray-50 rounded-md border border-gray-400 p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
           {session.user.image ? (
             <Image
               src={session.user.image}
@@ -189,9 +189,9 @@ const UserProfile = async () => {
               />
             </div>
           )}
-          <div>
-            <div className="flex gap-4 items-center">
-              <h1 className="text-2xl font-bold">{session.user.name}</h1>
+          <div className="w-full">
+            <div className="flex gap-4 items-center flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold">{session.user.name}</h1>
               <p className="py-0.5 px-2 rounded-md border border-cyan-800 bg-cyan-50 text-gray-600 font-medium text-sm">
                 Free
               </p>
@@ -211,7 +211,7 @@ const UserProfile = async () => {
         <hr className="text-gray-400" />
         <h1 className="text-2xl font-bold">ALL TIME STATS</h1>
         <hr className="text-gray-400" />
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {performanceOverview.map((item, index) => {
             return (
               <div
@@ -233,7 +233,7 @@ const UserProfile = async () => {
         <h1 className="text-2xl font-bold">PERFORMANCE INSIGHTS</h1>
         <ProfileCharts sessionHistory={puzzleSessionHistory} />
         <hr className="text-gray-400" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">RECENT SESSIONS</h1>
           <Link href="/user/profile/session-history">
             {puzzleSessionHistory.length > 0 && (
@@ -245,7 +245,7 @@ const UserProfile = async () => {
           </Link>
         </div>
         {puzzleSessionHistory.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {puzzleSessionHistory.slice(0, 3).map((item) => {
               return <SessionCard puzzleSession={item} key={item._id} />;
             })}
@@ -256,7 +256,7 @@ const UserProfile = async () => {
           </h1>
         )}
         <hr className="text-gray-400" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">YOUR RECENT AI CHATS</h1>
           <Link href="/user/community/ai-math-chat">
             {aiChats.length > 0 && (
@@ -275,7 +275,7 @@ const UserProfile = async () => {
           </h1>
         )}
         <hr className="text-gray-400" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">YOUR RECENT THREADS</h1>
           <Link href="/user/profile/threads">
             {threads.length > 0 && (
@@ -287,7 +287,7 @@ const UserProfile = async () => {
           </Link>
         </div>
         {threads.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {threads.map((thread) => (
               <Link
                 key={thread._id}
@@ -325,7 +325,7 @@ const UserProfile = async () => {
           </h1>
         )}
         <hr className="text-gray-400" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">YOUR COMMUNITY PUZZLES</h1>
           <Link href="/user/profile/puzzles">
             {communityPuzzles.length > 0 && (
@@ -337,7 +337,7 @@ const UserProfile = async () => {
           </Link>
         </div>
         {communityPuzzles.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {communityPuzzles.map((puzzle) => (
               <div
                 key={puzzle._id}
@@ -391,7 +391,7 @@ const UserProfile = async () => {
           </h1>
         )}
         <hr className="text-gray-400" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">YOUR PUZZLE DRAFTS</h1>
           <Link href="/user/profile/puzzles/drafts">
             {communityPuzzleDrafts.length > 0 && (
@@ -403,7 +403,7 @@ const UserProfile = async () => {
           </Link>
         </div>
         {communityPuzzleDrafts.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {communityPuzzleDrafts.map((draft) => (
               <Link
                 href={`/user/community/puzzles/create?draft=${draft._id}`}

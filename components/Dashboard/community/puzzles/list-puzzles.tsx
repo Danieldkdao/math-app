@@ -83,7 +83,7 @@ const ListPuzzles = ({ puzzles }: { puzzles: MathCommunityPuzzle[] }) => {
   return (
     <section className="grid gap-4 lg:grid-cols-[1.1fr,0.9fr]">
       <div className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {filteredPuzzles
             .slice(
               (currentPage - 1) * numPerPage,
@@ -95,7 +95,7 @@ const ListPuzzles = ({ puzzles }: { puzzles: MathCommunityPuzzle[] }) => {
                 href={`/user/community/puzzles/${puzzle._id}`}
               >
                 <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <div className="inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">
                       <FaLayerGroup className="text-cyan-600" />
                       {puzzle.category}
@@ -112,7 +112,7 @@ const ListPuzzles = ({ puzzles }: { puzzles: MathCommunityPuzzle[] }) => {
                       <MarkdownRenderer text={puzzle.problemText} />
                     </div>
                   </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-semibold text-gray-700">
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold text-gray-700">
                     <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-gray-200">
                       <FaUserFriends className="text-cyan-600" />
                       {puzzle.attempts.length} attempts,{" "}
@@ -146,7 +146,7 @@ const ListPuzzles = ({ puzzles }: { puzzles: MathCommunityPuzzle[] }) => {
         </div>
 
         {puzzles.length > numPerPage && (
-          <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
             <div className="text-sm text-gray-600">
               Page {currentPage} of {numberOfPages}
             </div>

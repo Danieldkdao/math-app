@@ -219,7 +219,7 @@ const CommunityPuzzleDetailPage = async ({
                           className="rounded-full"
                         />
                       ) : (
-                        <div className="flex size-10 items-center justify-center rounded-full bg-gray-900 text-white">
+                        <div className="flex size-10 items-center justify-center rounded-full bg-gray-900 text-white flex-shrink-0">
                           <FaUser />
                         </div>
                       )}

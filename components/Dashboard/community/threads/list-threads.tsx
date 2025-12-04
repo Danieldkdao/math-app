@@ -43,7 +43,7 @@ const ListThreads = ({ threads }: { threads: PopulatedThread[] }) => {
             href={`/user/community/discussions/thread/${thread._id}`}
           >
             <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">
                     <FaHashtag className="text-cyan-600" />
