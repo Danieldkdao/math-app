@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaClock,
   FaCommentDots,
@@ -41,13 +41,7 @@ const Chatbox = () => {
     "assistant"
   );
   const { setIsModalOpen } = useModal();
-  const {data: session} = authClient.useSession();
-
-  if (session == null) {
-    redirect("/");
-    toast.error("You must be signed in to chat with AI.");
-    return;
-  }
+  const { data: session } = authClient.useSession();
 
   const sendChat = async () => {
     if (!prompt.trim().length)
@@ -189,16 +183,25 @@ const Chatbox = () => {
                     <MarkdownRenderer text={message.content} />
                   </div>
                 )}
-                {message.role === "user" ? session.user.image ? (
-                  <div className="flex-shrink-0">
-                    <Image src={session.user.image} alt="User profile image" width={35} height={35} className="rounded-full"/>
-                  </div>
-                  
+                {message.role === "user" ? (
+                  session?.user.image ? (
+                    <div className="flex-shrink-0">
+                      <Image
+                        src={session.user.image}
+                        alt="User profile image"
+                        width={35}
+                        height={35}
+                        className="rounded-full"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex size-9 items-center justify-center rounded-full bg-gray-900 text-white shadow-sm">
+                      <FaUser />
+                    </div>
+                  )
                 ) : (
-                  <div className="flex size-9 items-center justify-center rounded-full bg-gray-900 text-white shadow-sm">
-                    <FaUser />
-                  </div>
-                ) : <></>}
+                  <></>
+                )}
               </div>
             ))
           )}
