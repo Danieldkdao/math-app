@@ -12,8 +12,12 @@ import Faqs from "@/components/Home/Faqs";
 import Navbar from "@/components/Home/Navbar";
 import Footer from "@/components/Home/Footer";
 import Link from "next/link";
+import { auth } from "@/lib/auth/auth";
+import { headers } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const h = await headers();
+  const session = await auth.api.getSession({ headers: h });
   const impactStats = [
     { label: "Families learning", value: "10k+", detail: "active members" },
     { label: "Puzzles built", value: "500+", detail: "unique challenges" },
@@ -75,9 +79,9 @@ export default function Home() {
                   playful math adventures, scaffolded hints, and a supportive,
                   moderated community.
                 </p>
-                <Link href="/auth/login">
+                <Link href={session == null ? "/auth/login" : "/user/dashboard"}>
                   <button className="rounded-full bg-slate-900 text-white font-semibold px-6 py-3 shadow-lg hover:-translate-y-0.5 transition-transform cursor-pointer mb-3">
-                    Start solving
+                    {session == null ? "Start solving" : "Go to Dashboard"}
                   </button>
                 </Link>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700">
@@ -254,7 +258,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="max-w-6xl mx-auto pb-14 pt-6">
+        {session == null && <section className="max-w-6xl mx-auto pb-14 pt-6">
           <div className="rounded-3xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 p-8 sm:p-10 text-center text-white shadow-2xl">
             <h3 className="text-2xl sm:text-3xl font-bold mb-3">
               Ready to explore the next puzzle?
@@ -269,7 +273,7 @@ export default function Home() {
               </button>
             </Link>
           </div>
-        </section>
+        </section>}
       </div>
       <Footer />
     </div>
