@@ -76,7 +76,7 @@ export default function Home() {
                   moderated community.
                 </p>
                 <Link href="/auth/login">
-                  <button className="rounded-full bg-slate-900 text-white font-semibold px-6 py-3 shadow-lg hover:-translate-y-0.5 transition-transform cursor-pointer">
+                  <button className="rounded-full bg-slate-900 text-white font-semibold px-6 py-3 shadow-lg hover:-translate-y-0.5 transition-transform cursor-pointer mb-3">
                     Start solving
                   </button>
                 </Link>

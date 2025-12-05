@@ -41,7 +41,7 @@ const LoginPage = () => {
 
   const handleLogin = async (data: LoginForm) => {
     await authClient.signIn.email(
-      { ...data, callbackURL: "/" },
+      { ...data, callbackURL: "/user/dashboard" },
       {
         onError: (error) => {
           if(error.error.code === "EMAIL_NOT_VERIFIED"){

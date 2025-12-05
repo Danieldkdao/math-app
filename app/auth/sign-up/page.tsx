@@ -43,7 +43,7 @@ const SignUpPage = () => {
 
   const handleSignUp = async (data: SignUpForm) => {
     const res = await authClient.signUp.email(
-      { ...data, callbackURL: "/" },
+      { ...data, callbackURL: "/user/dashboard" },
       {
         onError: (error) => {
           toast.error(error.error.message || "Failed to sign up");
