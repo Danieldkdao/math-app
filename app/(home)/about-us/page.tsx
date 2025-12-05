@@ -166,7 +166,7 @@ const AboutUsPage = () => {
           <div className="rounded-3xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 p-8 sm:p-10 shadow-2xl text-center text-white">
             <div className="flex flex-col gap-3 max-w-3xl mx-auto">
               <p className="text-lg font-semibold">
-                hello@figuredmath.com · +1 (555) 123-4567
+                danieldkdao@gmail.com
               </p>
               <p className="text-white/90">
                 Prefer async? Share your ideas, challenges, or classroom stories. We’ll

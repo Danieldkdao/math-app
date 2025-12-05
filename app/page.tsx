@@ -11,6 +11,7 @@ import InfiniteSlide from "@/components/Home/InfiniteSlide";
 import Faqs from "@/components/Home/Faqs";
 import Navbar from "@/components/Home/Navbar";
 import Footer from "@/components/Home/Footer";
+import Link from "next/link";
 
 export default function Home() {
   const impactStats = [
@@ -70,17 +71,15 @@ export default function Home() {
                   </span>
                 </h1>
                 <p className="text-lg text-slate-700 max-w-2xl">
-                  Figured helps kids—and their grownups—stay curious with playful math
-                  adventures, scaffolded hints, and a supportive, moderated community.
+                  Figured helps kids—and their grownups—stay curious with
+                  playful math adventures, scaffolded hints, and a supportive,
+                  moderated community.
                 </p>
-                <div className="flex flex-wrap gap-3">
-                  <button className="rounded-full bg-slate-900 text-white font-semibold px-6 py-3 shadow-lg hover:-translate-y-0.5 transition-transform">
+                <Link href="/auth/login">
+                  <button className="rounded-full bg-slate-900 text-white font-semibold px-6 py-3 shadow-lg hover:-translate-y-0.5 transition-transform cursor-pointer">
                     Start solving
                   </button>
-                  <button className="rounded-full border border-slate-200 text-slate-900 font-semibold px-6 py-3 hover:bg-white transition-colors">
-                    View learning paths
-                  </button>
-                </div>
+                </Link>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-slate-700">
                   <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 border border-slate-200">
                     <span className="h-2 w-2 rounded-full bg-emerald-400" />
@@ -95,7 +94,11 @@ export default function Home() {
               <div className="relative flex-1 min-w-[280px] max-w-md self-center">
                 <div className="rounded-2xl bg-white p-5 shadow-xl border border-slate-200">
                   <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-slate-900">
-                    <Image src={UsersImage} alt="User testimonials image" height={42} />
+                    <Image
+                      src={UsersImage}
+                      alt="User testimonials image"
+                      height={42}
+                    />
                     <span>“We finally enjoy math together.”</span>
                   </div>
                   <div className="space-y-3 text-sm text-slate-700">
@@ -106,7 +109,9 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="rounded-xl bg-slate-50 p-4 space-y-2 border border-slate-200">
-                      <p className="font-semibold text-slate-900">Today’s focus</p>
+                      <p className="font-semibold text-slate-900">
+                        Today’s focus
+                      </p>
                       <ul className="space-y-1 text-slate-700 list-disc list-inside">
                         <li>Number sense warm-up (5 min)</li>
                         <li>Adaptive puzzle set (15 min)</li>
@@ -119,11 +124,15 @@ export default function Home() {
                           key={stat.label}
                           className="rounded-xl bg-slate-50 p-3 text-center border border-slate-200"
                         >
-                          <div className="text-lg font-bold text-slate-900">{stat.value}</div>
+                          <div className="text-lg font-bold text-slate-900">
+                            {stat.value}
+                          </div>
                           <div className="text-[11px] uppercase tracking-wide text-slate-500">
                             {stat.label}
                           </div>
-                          <div className="text-[11px] text-slate-500">{stat.detail}</div>
+                          <div className="text-[11px] text-slate-500">
+                            {stat.detail}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -143,8 +152,8 @@ export default function Home() {
               Built for confidence, rigor, and joy
             </h2>
             <p className="text-slate-700 max-w-3xl mx-auto">
-              Every touchpoint—training, AI hints, and community feedback—is designed to
-              keep learners curious, supported, and celebrated.
+              Every touchpoint—training, AI hints, and community feedback—is
+              designed to keep learners curious, supported, and celebrated.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -156,7 +165,9 @@ export default function Home() {
                 <div className="inline-flex items-center justify-center rounded-full bg-slate-100 size-10">
                   {item.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
+                <h3 className="text-xl font-semibold text-slate-900">
+                  {item.title}
+                </h3>
                 <p className="text-sm text-slate-700">{item.text}</p>
               </div>
             ))}
@@ -172,8 +183,9 @@ export default function Home() {
               A calm rhythm that builds mastery
             </h2>
             <p className="text-slate-700 max-w-3xl">
-              We keep learners in flow with predictable rituals: warm-ups, adaptive sets,
-              and reflections—plus optional time caps and hint rules to match their style.
+              We keep learners in flow with predictable rituals: warm-ups,
+              adaptive sets, and reflections—plus optional time caps and hint
+              rules to match their style.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
@@ -193,16 +205,21 @@ export default function Home() {
               </ul>
             </div>
             <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-4 shadow-sm">
-              <h3 className="text-xl font-semibold text-slate-900">Transparent guardrails</h3>
+              <h3 className="text-xl font-semibold text-slate-900">
+                Transparent guardrails
+              </h3>
               <div className="space-y-3 text-slate-700">
-                <p>Families choose the pace: timed drills, relaxed explorations, or both.</p>
                 <p>
-                  Hint toggles make support intentional—learners decide when to surface a
-                  nudge versus pushing through.
+                  Families choose the pace: timed drills, relaxed explorations,
+                  or both.
                 </p>
                 <p>
-                  Moderation, flagged content review, and community standards keep spaces
-                  kind and constructive.
+                  Hint toggles make support intentional—learners decide when to
+                  surface a nudge versus pushing through.
+                </p>
+                <p>
+                  Moderation, flagged content review, and community standards
+                  keep spaces kind and constructive.
                 </p>
               </div>
             </div>
@@ -243,17 +260,14 @@ export default function Home() {
               Ready to explore the next puzzle?
             </h3>
             <p className="text-slate-50/90 max-w-2xl mx-auto mb-6">
-              Set your first goal, choose your hints-and-time preferences, and start
-              collecting small wins today.
+              Set your first goal, choose your hints-and-time preferences, and
+              start collecting small wins today.
             </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <button className="rounded-full bg-white text-slate-900 font-semibold px-6 py-3 shadow-lg hover:-translate-y-0.5 transition-transform">
+            <Link href="/auth/sign-up">
+              <button className="rounded-full bg-white text-slate-900 font-semibold px-6 py-3 shadow-lg hover:-translate-y-0.5 transition-transform cursor-pointer">
                 Create a free profile
               </button>
-              <button className="rounded-full border border-white/70 text-white font-semibold px-6 py-3 hover:bg-white/10 transition-colors">
-                Preview the library
-              </button>
-            </div>
+            </Link>
           </div>
         </section>
       </div>

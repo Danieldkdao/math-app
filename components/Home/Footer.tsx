@@ -41,7 +41,7 @@ const Footer = () => {
         </div>
         <div className="flex flex-col gap-2">
           <h1 className="text-xl font-bold">Socials</h1>
-          <p className="text-gray-500">figuredoutadmin@gmail.com</p>
+          <p className="text-gray-500">danieldkdao@gmail.com</p>
           <div className="flex items-center gap-1">
             <Link href="https://www.facebook.com/">
               <Image
